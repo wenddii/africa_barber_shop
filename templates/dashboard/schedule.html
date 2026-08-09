@@ -1,5 +1,4 @@
 {% extends "dashboard/base.html" %}
-{% load ethiopian_tags %}
 
 {% block title %}Daily Schedule Matrix — Barber Dashboard{% endblock %}
 {% block header_title %}Daily Schedule & Time Blocking{% endblock %}
@@ -39,7 +38,7 @@
 
     <div style="margin-bottom: 15px;">
         <h4 style="color: #fff; font-size: 1.1rem;">
-            Schedule for {{ selected_date|format_date:current_lang }}
+            Schedule for {{ selected_date }}
             {% if selected_barber %} — {{ selected_barber.name }}{% endif %}
         </h4>
     </div>
@@ -59,7 +58,7 @@
                 {% for slot in slots %}
                     <tr style="{% if slot.is_booked %}background: rgba(212, 175, 55, 0.03);{% endif %}">
                         <td>
-                            <strong>{{ slot.time_obj|format_time:current_lang }}</strong>
+                            <strong>{{ slot.time_obj|time:"g:i A" }}</strong>
                             <small style="display: block; color: var(--text-muted); font-size: 0.75rem;">({{ slot.time_str }})</small>
                         </td>
 

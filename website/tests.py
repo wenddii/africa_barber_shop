@@ -34,7 +34,6 @@ class BookingSystemTests(TestCase):
             content_type="image/gif"
         )
 
-
         # Create staff user for dashboard
         self.staff_user = User.objects.create_user(
             username="barber_admin",
@@ -42,7 +41,6 @@ class BookingSystemTests(TestCase):
             password="password123",
             is_staff=True
         )
-
 
     def test_booking_creation_and_3day_limit(self):
         today = date.today()
@@ -69,7 +67,7 @@ class BookingSystemTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         slot_values = [s["value"] for s in data["slots"]]
-        self.assertNotIn("10:00", slot_values) # 10:00 is booked, should not be available
+        self.assertNotIn("10:00", slot_values)  # 10:00 is booked, should not be available
 
         # Test invalid date API endpoint
         response = self.client.get(f"/api/available-slots/?date={invalid_date.strftime('%Y-%m-%d')}&service={self.service.id}")
@@ -115,35 +113,15 @@ class BookingSystemTests(TestCase):
         booking.refresh_from_db()
         self.assertEqual(booking.status, "completed")
 
-    def test_ethiopian_date_and_time_formatting(self):
-        from website.utils import format_date_by_lang, format_time_by_lang
-        from datetime import date, time
-
-        # Test Date: August 10, 2026 -> Ethiopian 2018-12-04 (ሰኞ፣ ነሐሴ 4 2018)
-        dt = date(2026, 8, 10)
-        eth_date_str = format_date_by_lang(dt, lang="am")
-        en_date_str = format_date_by_lang(dt, lang="en")
-
-        self.assertIn("ነሐሴ 4 2018", eth_date_str)
-        self.assertEqual(en_date_str, "Monday, August 10, 2026")
-
-        # Test Time: 10:30 AM -> 4:30 ጧት
-        t1 = time(10, 30)
-        self.assertEqual(format_time_by_lang(t1, lang="am"), "4:30 ጧት")
-        self.assertEqual(format_time_by_lang(t1, lang="en"), "10:30 AM")
-
-        # Test Time: 2:15 PM (14:15) -> 8:15 ከሰዓት
-        t2 = time(14, 15)
-        self.assertEqual(format_time_by_lang(t2, lang="am"), "8:15 ከሰዓት")
-
-    def test_language_switch_endpoint(self):
-        response = self.client.get("/set-language/?lang=am")
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.client.session.get("lang"), "am")
-
-        # Verify home page renders with Amharic translations
-        response = self.client.get("/")
-        self.assertContains(response, "ቀጠሮ ይያዙ")
+    def test_english_date_and_time_rendering(self):
+        # Verify slot API returns 12-hour AM/PM English formatted times
+        today = date.today() + timedelta(days=1)
+        response = self.client.get(f"/api/available-slots/?date={today.strftime('%Y-%m-%d')}&service={self.service.id}")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(len(data["slots"]) > 0)
+        first_slot = data["slots"][0]
+        self.assertIn("AM", first_slot["display"])
 
     def test_offline_and_blocked_time_appointments(self):
         self.client.login(username="barber_admin", password="password123")
@@ -184,4 +162,61 @@ class BookingSystemTests(TestCase):
         self.assertContains(sched_response, "Solomon Walkin")
         self.assertContains(sched_response, "Lunch Break")
 
+    def test_testimonial_with_and_without_image(self):
+        from website.models import Testimonial
 
+        # Testimonial 1: Without image
+        t1 = Testimonial.objects.create(
+            customer_name="Dawit Tech",
+            comment="Great service!",
+            rating=5
+        )
+
+        # Testimonial 2: With image
+        t2 = Testimonial.objects.create(
+            customer_name="Sara Barber",
+            comment="Best haircut in town",
+            rating=5,
+            image=self.dummy_image
+        )
+
+        # Check public home page rendering
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Dawit Tech")
+        self.assertContains(response, "Sara Barber")
+        self.assertContains(response, "D")
+
+    def test_shop_logo_rendering_and_fallback(self):
+        # 1. Test fallback name when no logo exists
+        self.shop.logo = None
+        self.shop.save()
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.shop.name)
+
+        # 2. Upload logo image
+        logo_file = SimpleUploadedFile(name="logo.gif", content=b"GIF89a\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff\x00\x00\x00!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;", content_type="image/gif")
+        self.shop.logo = logo_file
+        self.shop.save()
+
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.shop.logo.url)
+
+        # 3. Test Staff Dashboard Shop Info update with logo upload
+        self.client.login(username="barber_admin", password="password123")
+        logo_upload = SimpleUploadedFile(name="new_logo.gif", content=b"GIF89a\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff\x00\x00\x00!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;", content_type="image/gif")
+        response = self.client.post("/dashboard/shop/", {
+            "name": "Paradise Premium Studio",
+            "phone_number": "0911998877",
+            "location": "Bole, Addis Ababa",
+            "opening_hours": "08:00 AM - 09:00 PM",
+            "description": "Luxury barbershop",
+            "payment_instructions": "CBE: 1000123456",
+            "logo": logo_upload,
+        })
+        self.assertEqual(response.status_code, 302)
+        self.shop.refresh_from_db()
+        self.assertEqual(self.shop.name, "Paradise Premium Studio")
+        self.assertTrue(bool(self.shop.logo))

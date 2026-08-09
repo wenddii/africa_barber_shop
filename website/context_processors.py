@@ -1,12 +1,10 @@
-from website.utils import get_translations
+from website.models import ShopInfo
 
 
 def language_context(request):
-    lang = request.session.get("lang") or request.COOKIES.get("lang") or "en"
-    if lang not in ["en", "am"]:
-        lang = "en"
-
+    """
+    Global context processor injecting shop branding information into all templates.
+    """
     return {
-        "current_lang": lang,
-        "t": get_translations(lang),
+        "shop": ShopInfo.objects.first(),
     }

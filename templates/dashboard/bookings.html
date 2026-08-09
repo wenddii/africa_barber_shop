@@ -1,5 +1,4 @@
 {% extends "dashboard/base.html" %}
-{% load ethiopian_tags %}
 
 {% block title %}Bookings — Barber Dashboard{% endblock %}
 {% block header_title %}All Bookings & Blocked Times{% endblock %}
@@ -81,8 +80,8 @@
                         <td>{{ b.service.name|default:"Blocked Period" }}</td>
                         <td>{{ b.barber.name|default:"Any Barber" }}</td>
                         <td>
-                            <div>{{ b.appointment_date|format_date:current_lang }}</div>
-                            <small style="color: var(--text-muted);">{{ b.appointment_time|format_time:current_lang }}</small>
+                            <div>{{ b.appointment_date|date:"M d, Y" }}</div>
+                            <small style="color: var(--text-muted);">{{ b.appointment_time|time:"g:i A" }}</small>
                         </td>
                         <td>
                             <span class="badge badge-{{ b.payment_status }}">

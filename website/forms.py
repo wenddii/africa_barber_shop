@@ -96,9 +96,10 @@ class ServiceForm(forms.ModelForm):
 class ShopInfoForm(forms.ModelForm):
     class Meta:
         model = ShopInfo
-        fields = ["name", "description", "phone_number", "location", "opening_hours", "payment_instructions", "instagram", "tiktok"]
+        fields = ["name", "logo", "description", "phone_number", "location", "opening_hours", "payment_instructions", "instagram", "tiktok"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
+            "logo": forms.FileInput(attrs={"class": "form-control", "accept": "image/*"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "phone_number": forms.TextInput(attrs={"class": "form-control"}),
             "location": forms.TextInput(attrs={"class": "form-control"}),
@@ -107,6 +108,7 @@ class ShopInfoForm(forms.ModelForm):
             "instagram": forms.URLInput(attrs={"class": "form-control"}),
             "tiktok": forms.URLInput(attrs={"class": "form-control"}),
         }
+
 
 
 class GalleryImageForm(forms.ModelForm):

@@ -4,8 +4,8 @@ from . import views
 urlpatterns = [
     # Public routes
     path("", views.home, name="home"),
-    path("set-language/", views.set_language, name="set_language"),
     path("booking/", views.booking_create, name="booking"),
+
 
     path("booking/success/<int:pk>/", views.booking_success, name="booking_success"),
     path("api/available-slots/", views.available_slots_api, name="available_slots_api"),

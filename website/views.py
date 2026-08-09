@@ -58,81 +58,17 @@ def home(request):
     return render(request, "website/home.html", context)
 
 
-def generate_available_slots(selected_date, service_duration=30, barber_id=None):
-    today = date.today()
-    max_date = today + timedelta(days=3)
-    if selected_date < today or selected_date > max_date:
-        return []
-
-    # Operating hours: 09:00 AM to 08:00 PM (20:00)
-    start_time = datetime.strptime("09:00", "%H:%M").time()
-    end_time = datetime.strptime("20:00", "%H:%M").time()
-
-    # Active bookings for the chosen date
-    active_bookings = Booking.objects.filter(
-        appointment_date=selected_date,
-        status__in=["pending", "confirmed"],
-    )
-    if barber_id:
-        active_bookings = active_bookings.filter(barber_id=barber_id)
-
-    booked_intervals = []
-    for b in active_bookings:
-        b_duration = b.service.duration if (b.service and b.service.duration) else 30
-        b_start = datetime.combine(selected_date, b.appointment_time)
-        b_end = b_start + timedelta(minutes=b_duration)
-        booked_intervals.append((b_start, b_end))
-
-    available_slots = []
-    curr_dt = datetime.combine(selected_date, start_time)
-    end_dt = datetime.combine(selected_date, end_time)
-    now_dt = datetime.now()
-    step_minutes = 30
-
-    while curr_dt + timedelta(minutes=service_duration) <= end_dt:
-        slot_start = curr_dt
-        slot_end = curr_dt + timedelta(minutes=service_duration)
-
-        # Check if time is in the past for today
-        if selected_date == today and slot_start <= now_dt:
-            curr_dt += timedelta(minutes=step_minutes)
-            continue
-
-        # Check overlap
-        overlap = False
-        for b_start, b_end in booked_intervals:
-            if not (slot_end <= b_start or slot_start >= b_end):
-                overlap = True
-                break
-
-        if not overlap:
-            available_slots.append(slot_start.strftime("%H:%M"))
-
-        curr_dt += timedelta(minutes=step_minutes)
-
-    return available_slots
+from .utils import generate_available_slots
 
 
-from .utils import format_time_by_lang
 
 
-def set_language(request):
-    lang = request.GET.get("lang", "en")
-    if lang not in ["en", "am"]:
-        lang = "en"
-
-    request.session["lang"] = lang
-    next_url = request.META.get("HTTP_REFERER") or "/"
-    response = redirect(next_url)
-    response.set_cookie("lang", lang, max_age=365 * 24 * 60 * 60)
-    return response
 
 
 def available_slots_api(request):
     date_str = request.GET.get("date")
     service_id = request.GET.get("service")
     barber_id = request.GET.get("barber")
-    lang = request.session.get("lang") or request.COOKIES.get("lang") or "en"
 
     if not date_str or not service_id:
         return JsonResponse({"slots": [], "error": "Date and Service are required."})
@@ -153,10 +89,11 @@ def available_slots_api(request):
 
     formatted_slots = []
     for s in slots:
-        t_obj = datetime.strptime(s, "%H:%M").time()
+        val_str = s["value"] if isinstance(s, dict) else s
+        t_obj = datetime.strptime(val_str, "%H:%M").time()
         formatted_slots.append({
-            "value": s,
-            "display": format_time_by_lang(t_obj, lang)
+            "value": val_str,
+            "display": t_obj.strftime("%I:%M %p").lstrip("0")
         })
 
     return JsonResponse({
@@ -526,14 +463,15 @@ def dashboard_shop_info(request):
     shop = ShopInfo.objects.first()
     if request.method == "POST":
         if shop:
-            form = ShopInfoForm(request.POST, instance=shop)
+            form = ShopInfoForm(request.POST, request.FILES, instance=shop)
         else:
-            form = ShopInfoForm(request.POST)
+            form = ShopInfoForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
             messages.success(request, "Shop information and payment accounts updated.")
             return redirect("dashboard_shop_info")
+
     else:
         form = ShopInfoForm(instance=shop) if shop else ShopInfoForm()
 

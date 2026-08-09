@@ -1,18 +1,40 @@
 {% extends "dashboard/base.html" %}
 
-{% block title %}Shop Info & Payment Accounts — Barber Dashboard{% endblock %}
-{% block header_title %}Shop Info & Payment Instructions{% endblock %}
+{% block title %}Shop Info & Branding — Barber Dashboard{% endblock %}
+{% block header_title %}Shop Info & Branding{% endblock %}
 
 {% block content %}
 
 <div style="max-width: 800px; margin: 0 auto;">
     <div class="dashboard-card">
         <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
-            Shop Details & Payment Accounts
+            Shop Details, Logo & Branding
         </h3>
 
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+
+            <!-- LOGO UPLOAD & PREVIEW SECTION -->
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h4 style="color: #fff; margin-top: 0; margin-bottom: 10px; font-size: 1rem;">
+                    <i class="fa-solid fa-image" style="color: var(--accent-gold);"></i> Barbershop Logo
+                </h4>
+                <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                    {% if shop and shop.logo %}
+                        <div style="text-align: center;">
+                            <img src="{{ shop.logo.url }}" alt="{{ shop.name }}" style="max-height: 70px; max-width: 180px; object-fit: contain; background: #111; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <small style="display: block; color: var(--text-muted); margin-top: 4px;">Current Logo</small>
+                        </div>
+                    {% endif %}
+                    <div style="flex: 1; min-width: 240px;">
+                        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Upload / Replace Logo (PNG or SVG recommended)</label>
+                        {{ form.logo }}
+                        {% if form.logo.errors %}
+                            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.logo.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                 <div>

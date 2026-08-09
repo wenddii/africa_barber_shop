@@ -4,7 +4,8 @@ from .models import ShopInfo, Service, GalleryImage, ContactMessage, Testimonial
 
 @admin.register(ShopInfo)
 class ShopInfoAdmin(admin.ModelAdmin):
-    list_display = ("name", "phone_number", "location", "opening_hours")
+    list_display = ("name", "logo", "phone_number", "location", "opening_hours")
+
 
 
 @admin.register(Service)
@@ -24,7 +25,8 @@ class ContactMessageAdmin(admin.ModelAdmin):
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
-    list_display = ("customer_name", "rating")
+    list_display = ("customer_name", "rating", "image")
+
 
 
 @admin.register(Barber)

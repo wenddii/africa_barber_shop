@@ -1,16 +1,16 @@
 <section class="hero section-pad" style="background-image: url('/static/images/hero.jpg');">
     <div class="container hero-grid hero-grid-minimal">
         <div class="hero-copy">
-            <span class="eyebrow">{{ t.hero_eyebrow }}</span>
+            <span class="eyebrow">Premium Grooming Experience</span>
             <span class="eyebrow-line"></span>
-            <h1>{{ t.hero_title_1 }}<br><em>{{ t.hero_title_2 }}</em></h1>
+            <h1>Where Every Cut<br><em>Tells a Story</em></h1>
             <p class="hero-lead">
-                {{ t.hero_lead }}
+                Precision cuts and luxury grooming crafted for the modern gentleman.
             </p>
 
             <div class="hero-actions">
-                <a class="button button-primary" href="{% url 'booking' %}"><i class="fa-solid fa-calendar-check"></i> {{ t.hero_btn_book }}</a>
-                <a class="button button-ghost" href="#services"><i class="fa-solid fa-scissors"></i> {{ t.hero_btn_services }}</a>
+                <a class="button button-primary" href="{% url 'booking' %}"><i class="fa-solid fa-calendar-check"></i> Book Appointment</a>
+                <a class="button button-ghost" href="#services"><i class="fa-solid fa-scissors"></i> View Services</a>
             </div>
         </div>
     </div>
@@ -27,19 +27,19 @@
         <div class="stats-grid">
             <div class="stat-item reveal">
                 <span class="stat-number" data-count="500">0</span>
-                <span class="stat-label">{{ t.stat_clients }}</span>
+                <span class="stat-label">Happy Clients</span>
             </div>
             <div class="stat-item reveal" data-delay="100">
                 <span class="stat-number" data-count="5">0</span>
-                <span class="stat-label">{{ t.stat_years }}</span>
+                <span class="stat-label">Years of Craft</span>
             </div>
             <div class="stat-item reveal" data-delay="200">
                 <span class="stat-number" data-count="4.9" data-decimals="1">0</span>
-                <span class="stat-label">{{ t.stat_rating }}</span>
+                <span class="stat-label">Star Rating</span>
             </div>
             <div class="stat-item reveal" data-delay="300">
                 <span class="stat-number" data-count="6">0</span>
-                <span class="stat-label">{{ t.stat_barbers }}</span>
+                <span class="stat-label">Expert Barbers</span>
             </div>
         </div>
     </div>
@@ -49,10 +49,10 @@
 <section class="section-pad about-section" id="about">
     <div class="container about-grid">
         <div class="section-heading left-align reveal-left">
-            <span class="eyebrow"><i class="fa-solid fa-gem"></i> {{ t.about_eyebrow }}</span>
-            <h2>{{ t.about_heading }}</h2>
+            <span class="eyebrow"><i class="fa-solid fa-gem"></i> Who We Are</span>
+            <h2>Luxury barbering, built around your style.</h2>
             <p>
-                {{ t.about_p }}
+                Paradise Barber Shop is designed for clients who want more than a quick cut. It is a polished, calm environment where every detail feels intentional, modern, and refined.
             </p>
         </div>
 
@@ -60,22 +60,22 @@
             <div class="about-item">
                 <span><i class="fa-solid fa-comments"></i></span>
                 <div>
-                    <h3>{% if current_lang == 'am' %}የግል ምክክር{% else %}Personalized Consultation{% endif %}</h3>
-                    <p>{% if current_lang == 'am' %}ከእርስዎ የፊት ቅርጽና ፍላጎት እንጀምራለን።{% else %}We start with your face shape, hair texture, and preferred finish.{% endif %}</p>
+                    <h3>Personalized Consultation</h3>
+                    <p>We start with your face shape, hair texture, and preferred finish.</p>
                 </div>
             </div>
             <div class="about-item">
                 <span><i class="fa-solid fa-cut"></i></span>
                 <div>
-                    <h3>{% if current_lang == 'am' %}ጥራት ያለው ሥራ{% else %}Premium Execution{% endif %}</h3>
-                    <p>{% if current_lang == 'am' %}ጽዳቱን የጠበቀ፣ የተካነ ጥራት ያለው ቁረጥ።{% else %}Clean lines, precise blending, and detail-focused grooming.{% endif %}</p>
+                    <h3>Premium Execution</h3>
+                    <p>Clean lines, precise blending, and detail-focused grooming.</p>
                 </div>
             </div>
             <div class="about-item">
                 <span><i class="fa-solid fa-crown"></i></span>
                 <div>
-                    <h3>{% if current_lang == 'am' %}በራስ መተማመን የሚሰጥ አጨራረስ{% else %}Confidence-Ready Finish{% endif %}</h3>
-                    <p>{% if current_lang == 'am' %}እያንዳንዱ ቀጠሮ የሚጠናቀቀው በሚያምር ገጽታ ነው።{% else %}Every appointment ends with a polished look built to last.{% endif %}</p>
+                    <h3>Confidence-Ready Finish</h3>
+                    <p>Every appointment ends with a polished look built to last.</p>
                 </div>
             </div>
         </div>

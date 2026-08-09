@@ -3,6 +3,7 @@ from django.db import models
 
 class ShopInfo(models.Model):
     name = models.CharField(max_length=100)
+    logo = models.ImageField(upload_to="shop/", blank=True, null=True)
     description = models.TextField()
     phone_number = models.CharField(max_length=20)
     location = models.CharField(max_length=200)
@@ -10,6 +11,7 @@ class ShopInfo(models.Model):
     payment_instructions = models.TextField(blank=True, help_text="Payment accounts info e.g. CBE / Telebirr numbers")
     instagram = models.URLField(blank=True)
     tiktok = models.URLField(blank=True)
+
 
     def __str__(self):
         return self.name
@@ -47,9 +49,11 @@ class Testimonial(models.Model):
     customer_name = models.CharField(max_length=100)
     comment = models.TextField()
     rating = models.PositiveSmallIntegerField(default=5)
+    image = models.ImageField(upload_to="testimonials/", blank=True, null=True)
 
     def __str__(self):
         return self.customer_name
+
 
 
 class Barber(models.Model):

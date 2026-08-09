@@ -1,4 +1,4 @@
-{% load static ethiopian_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -242,12 +242,17 @@
 
     <aside class="sidebar">
         <a href="{% url 'dashboard_index' %}" class="sidebar-brand">
-            <span class="logo-mark">P</span>
-            <div>
-                <strong>Barber Admin</strong>
-                <small>Paradise Studio</small>
-            </div>
+            {% if shop and shop.logo %}
+                <img src="{{ shop.logo.url }}" alt="{{ shop.name }}" style="max-height: 40px; max-width: 140px; object-fit: contain; vertical-align: middle;">
+            {% else %}
+                <span class="logo-mark">P</span>
+                <div>
+                    <strong>{{ shop.name|default:"Barber Admin" }}</strong>
+                    <small>Dashboard Studio</small>
+                </div>
+            {% endif %}
         </a>
+
 
         <nav class="sidebar-nav">
             <a href="{% url 'dashboard_index' %}" class="{% if request.resolver_match.url_name == 'dashboard_index' %}active{% endif %}">
@@ -286,19 +291,13 @@
             <h3 style="font-size: 1.1rem; font-weight: 600;">{% block header_title %}Barber Dashboard{% endblock %}</h3>
             
             <div style="display: flex; align-items: center; gap: 20px;">
-                <!-- DASHBOARD LANGUAGE TOGGLE -->
-                <div style="display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); font-size: 0.8rem;">
-                    <a href="{% url 'set_language' %}?lang=en" style="color: {% if current_lang == 'en' %}var(--accent-gold){% else %}var(--text-muted){% endif %}; text-decoration: none; padding: 2px 6px; font-weight: 600;">EN</a>
-                    <span style="color: var(--border-color);">|</span>
-                    <a href="{% url 'set_language' %}?lang=am" style="color: {% if current_lang == 'am' %}var(--accent-gold){% else %}var(--text-muted){% endif %}; text-decoration: none; padding: 2px 6px; font-weight: 600;">አማ</a>
-                </div>
-
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <i class="fa-solid fa-user-circle" style="font-size: 1.5rem; color: var(--accent-gold);"></i>
                     <span style="font-size: 0.9rem; font-weight: 500;">{{ request.user.username }}</span>
                 </div>
             </div>
         </header>
+
 
         <main class="content-area">
             {% if messages %}

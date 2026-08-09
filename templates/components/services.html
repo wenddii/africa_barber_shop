@@ -1,9 +1,9 @@
 <section class="section-pad services-section" id="services">
     <div class="container">
         <div class="section-heading reveal">
-            <span class="eyebrow"><i class="fa-solid fa-scissors"></i> {{ t.services_eyebrow }}</span>
-            <h2>{{ t.services_heading }}</h2>
-            <p>{{ t.services_p }}</p>
+            <span class="eyebrow"><i class="fa-solid fa-scissors"></i> Our Services</span>
+            <h2>Crafted grooming for every detail.</h2>
+            <p>Each service is delivered with care, precision, and dedicated time slots.</p>
         </div>
 
         <div class="service-grid">
@@ -13,12 +13,12 @@
                         <h3><i class="fa-solid fa-scissors"></i> {{ service.name }}</h3>
                         <div style="text-align: right;">
                             <strong style="display: block; font-size: 1.2rem; color: var(--gold, #d4af37);">{{ service.price }} ETB</strong>
-                            <small style="color: #888;"><i class="fa-regular fa-clock"></i> {{ service.duration }} {{ t.mins }}</small>
+                            <small style="color: #888;"><i class="fa-regular fa-clock"></i> {{ service.duration }} mins</small>
                         </div>
                     </div>
                     <p>{{ service.description }}</p>
                     <div style="margin-top: 15px;">
-                        <a href="{% url 'booking' %}?service={{ service.id }}" class="button button-sm button-primary"><i class="fa-solid fa-calendar-plus"></i> {{ t.services_book_btn }}</a>
+                        <a href="{% url 'booking' %}?service={{ service.id }}" class="button button-sm button-primary"><i class="fa-solid fa-calendar-plus"></i> Book This Service</a>
                     </div>
                 </article>
             {% empty %}
