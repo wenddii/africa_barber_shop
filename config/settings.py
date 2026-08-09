@@ -1,31 +1,40 @@
 from pathlib import Path
 import os
+import sys
 
 import dj_database_url
 from dotenv import load_dotenv
 
 load_dotenv()
+
 import cloudinary
 import cloudinary.uploader
+
+
 # ------------------------------------------------------------------------------
 # Base Directory
 # ------------------------------------------------------------------------------
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # ------------------------------------------------------------------------------
 # Security
 # ------------------------------------------------------------------------------
 
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-local-key")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-local-key"
+)
 
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     ".onrender.com",
 ]
+
 
 # ------------------------------------------------------------------------------
 # Installed Apps
@@ -45,6 +54,7 @@ INSTALLED_APPS = [
     "website",
 ]
 
+
 # ------------------------------------------------------------------------------
 # Middleware
 # ------------------------------------------------------------------------------
@@ -52,6 +62,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -60,7 +71,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
 ROOT_URLCONF = "config.urls"
+
 
 # ------------------------------------------------------------------------------
 # Templates
@@ -69,30 +82,30 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [
+            BASE_DIR / "templates"
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "website.context_processors.language_context",
             ],
         },
     },
 ]
 
 
-
 WSGI_APPLICATION = "config.wsgi.application"
+
 
 # ------------------------------------------------------------------------------
 # Database
 # ------------------------------------------------------------------------------
 
-import sys
-
 db_url = os.getenv("DATABASE_URL")
+
 if "test" in sys.argv or not db_url:
     DATABASES = {
         "default": {
@@ -129,6 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # ------------------------------------------------------------------------------
 # Internationalization
 # ------------------------------------------------------------------------------
@@ -140,6 +154,7 @@ TIME_ZONE = "Africa/Addis_Ababa"
 USE_I18N = True
 
 USE_TZ = True
+
 
 # ------------------------------------------------------------------------------
 # Static Files
@@ -153,12 +168,15 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+
 # ------------------------------------------------------------------------------
 # Media Files
 # ------------------------------------------------------------------------------
 
 MEDIA_URL = "/media/"
+
 MEDIA_ROOT = BASE_DIR / "media"
+
 
 # ------------------------------------------------------------------------------
 # Cloudinary / Storage Configuration
@@ -168,7 +186,12 @@ CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
 CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
 CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 
-if "test" in sys.argv or not (CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET):
+
+if "test" in sys.argv or not (
+    CLOUDINARY_CLOUD_NAME
+    and CLOUDINARY_API_KEY
+    and CLOUDINARY_API_SECRET
+):
     STORAGES = {
         "default": {
             "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -177,6 +200,7 @@ if "test" in sys.argv or not (CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and C
             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
         },
     }
+
 else:
     STORAGES = {
         "default": {
@@ -186,6 +210,7 @@ else:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+
     cloudinary.config(
         cloud_name=CLOUDINARY_CLOUD_NAME,
         api_key=CLOUDINARY_API_KEY,
@@ -194,14 +219,16 @@ else:
 
 
 # ------------------------------------------------------------------------------
-# Login URL settings
+# Login URL Settings
 # ------------------------------------------------------------------------------
 
 LOGIN_URL = "dashboard_login"
+
 LOGIN_REDIRECT_URL = "dashboard_index"
+
 
 # ------------------------------------------------------------------------------
 # Default Primary Key
 # ------------------------------------------------------------------------------
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
