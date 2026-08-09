@@ -1,0 +1,27 @@
+<section class="section-pad contact-section" id="contact">
+    <div class="container contact-grid">
+        <div class="section-heading left-align reveal-left">
+            <span class="eyebrow"><i class="fa-solid fa-phone"></i> Get in Touch</span>
+            <h2>Have Questions? Reach Out</h2>
+            <p>Send us a message or schedule your next cut directly using our online booking system.</p>
+
+            <div class="contact-details reveal" data-delay="100">
+                <a class="contact-link" href="tel:{{ shop.phone_number }}"><i class="fa-solid fa-phone"></i> {{ shop.phone_number|default:"Call now" }}</a>
+                <p class="contact-meta"><i class="fa-solid fa-location-dot"></i> {{ shop.location|default:"Addis Ababa, Ethiopia" }}</p>
+                <p class="contact-meta"><i class="fa-solid fa-clock"></i> {{ shop.opening_hours|default:"Open for scheduled appointments" }}</p>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <a href="{% url 'booking' %}" class="button button-primary"><i class="fa-solid fa-calendar-check"></i> Book Online Appointment</a>
+            </div>
+        </div>
+
+        <div class="contact-card reveal-right">
+            <form method="POST" action="{% url 'home' %}#contact" class="contact-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="button button-primary button-full">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>

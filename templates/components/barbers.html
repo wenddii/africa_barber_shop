@@ -1,0 +1,36 @@
+<section class="section-pad team-section" id="barbers">
+    <div class="container">
+        <div class="section-heading reveal">
+            <span class="eyebrow"><i class="fa-solid fa-user-tie"></i> Meet Our Barbers</span>
+            <h2>Skilled hands behind every finish.</h2>
+            <p>Every barber at Paradise brings years of experience, sharp technique, and genuine passion for the craft.</p>
+        </div>
+
+        <div class="team-grid">
+            {% for barber in barbers %}
+                <article class="team-card reveal" {% if forloop.counter0 > 0 %}data-delay="{{ forloop.counter0 }}00"{% endif %}>
+                    <div class="team-photo-wrap">
+                        {% if barber.photo %}
+                            <img src="{{ barber.photo.url }}" alt="{{ barber.name }}" class="team-photo">
+                        {% else %}
+                            <div class="team-photo team-photo-placeholder" style="background: #222; display: flex; align-items: center; justify-content: center; height: 250px;"><i class="fa-solid fa-user" style="font-size: 3rem; color: #555;"></i></div>
+                        {% endif %}
+                    </div>
+
+                    <div class="team-copy">
+                        <h3>{{ barber.name }}</h3>
+                        <p class="team-role">{{ barber.role }}</p>
+                        <p>{{ barber.bio }}</p>
+                        <a href="{% url 'booking' %}?barber={{ barber.id }}" class="button button-sm button-ghost" style="margin-top: 10px;"><i class="fa-solid fa-calendar-check"></i> Book with {{ barber.name }}</a>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="empty-state">No barbers added yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="section-divider reveal">
+    <i class="fa-solid fa-scissors"></i>
+</div>

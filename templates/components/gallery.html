@@ -1,0 +1,28 @@
+<section class="section-pad gallery-section" id="gallery">
+    <div class="container">
+        <div class="section-heading reveal">
+            <span class="eyebrow"><i class="fa-solid fa-images"></i> Gallery</span>
+            <h2>A look inside the experience.</h2>
+            <p>Our best cuts, studio atmosphere, and the attention to detail that defines Paradise.</p>
+        </div>
+
+        <div class="gallery-grid">
+            {% for image in gallery %}
+                <figure class="gallery-card reveal-scale" {% if forloop.counter0 > 0 %}data-delay="{{ forloop.counter0 }}0"{% endif %}>
+                    {% if image.image %}
+                        <img src="{{ image.image.url }}" alt="{{ image.caption }}" loading="lazy">
+                    {% endif %}
+                    {% if image.caption %}
+                        <figcaption>{{ image.caption }}</figcaption>
+                    {% endif %}
+                </figure>
+            {% empty %}
+                <div class="empty-state">No gallery images available.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="section-divider reveal">
+    <i class="fa-solid fa-scissors"></i>
+</div>

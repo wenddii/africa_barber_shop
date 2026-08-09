@@ -1,0 +1,146 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Dashboard Overview — Paradise Barber Shop{% endblock %}
+{% block header_title %}Overview{% endblock %}
+
+{% block content %}
+
+<!-- METRICS CARDS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div>
+            <div class="val">{{ today_count }}</div>
+            <div class="lbl">Today's Appointments</div>
+        </div>
+        <div class="icon"><i class="fa-solid fa-calendar-day"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div>
+            <div class="val" style="color: #e9c46a;">{{ pending_payments_count }}</div>
+            <div class="lbl">Pending Payments</div>
+        </div>
+        <div class="icon" style="background: rgba(233, 196, 106, 0.1); color: #e9c46a;"><i class="fa-solid fa-receipt"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div>
+            <div class="val" style="color: #2a9d8f;">{{ confirmed_count }}</div>
+            <div class="lbl">Confirmed Appointments</div>
+        </div>
+        <div class="icon" style="background: rgba(42, 157, 143, 0.1); color: #2a9d8f;"><i class="fa-solid fa-circle-check"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div>
+            <div class="val">{{ completed_count }}</div>
+            <div class="lbl">Completed Total</div>
+        </div>
+        <div class="icon"><i class="fa-solid fa-scissors"></i></div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+    <!-- TODAY'S APPOINTMENTS -->
+    <div class="dashboard-card">
+        <h3 style="margin-bottom: 18px; font-size: 1.1rem; color: #fff; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-solid fa-clock" style="color: var(--accent-gold);"></i> Today's Schedule</span>
+            <span class="badge badge-pending">{{ today_appointments|length }} Bookings</span>
+        </h3>
+
+        <div class="table-responsive">
+            <table class="dash-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in today_appointments %}
+                        <tr>
+                            <td><strong>{{ b.appointment_time|time:"g:i A" }}</strong></td>
+                            <td>
+                                <div><strong>{{ b.customer_name }}</strong></div>
+                                <small style="color: var(--text-muted);">{{ b.phone_number }}</small>
+                            </td>
+                            <td>{{ b.service.name }}</td>
+                            <td><span class="badge badge-{{ b.status }}">{{ b.get_status_display }}</span></td>
+                            <td>
+                                <a href="{% url 'dashboard_booking_detail' b.id %}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">
+                                No appointments scheduled for today.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PENDING PAYMENTS QUEUE -->
+    <div class="dashboard-card">
+        <h3 style="margin-bottom: 18px; font-size: 1.1rem; color: #fff; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-solid fa-receipt" style="color: #e9c46a;"></i> Pending Payment Verification</span>
+            <a href="{% url 'dashboard_bookings' %}?payment=pending" style="color: var(--accent-gold); font-size: 0.85rem; text-decoration: none;">View All</a>
+        </h3>
+
+        <div class="table-responsive">
+            <table class="dash-table">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Customer</th>
+                        <th>Screenshot</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in pending_payments %}
+                        <tr>
+                            <td>
+                                <div>{{ b.appointment_date|date:"M d" }}</div>
+                                <small style="color: var(--text-muted);">{{ b.appointment_time|time:"g:i A" }}</small>
+                            </td>
+                            <td>
+                                <div><strong>{{ b.customer_name }}</strong></div>
+                                <small style="color: var(--text-muted);">{{ b.phone_number }}</small>
+                            </td>
+                            <td>
+                                {% if b.payment_screenshot %}
+                                    <span style="color: #2a9d8f;"><i class="fa-solid fa-image"></i> Uploaded</span>
+                                {% else %}
+                                    <span style="color: var(--danger);">Missing</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'dashboard_booking_detail' b.id %}" class="btn btn-gold" style="padding: 4px 10px; font-size: 0.8rem;">
+                                    Verify Payment
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 25px;">
+                                <i class="fa-solid fa-check-circle" style="color: #2a9d8f;"></i> No pending payment verifications!
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

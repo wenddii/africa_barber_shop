@@ -1,0 +1,29 @@
+<section class="section-pad testimonials-section" id="testimonials">
+    <div class="container">
+        <div class="section-heading reveal">
+            <span class="eyebrow"><i class="fa-solid fa-star"></i> Client Reviews</span>
+            <h2>Trusted by those who value quality.</h2>
+            <p>Real words from clients who keep coming back.</p>
+        </div>
+
+        <div class="testimonial-grid">
+            {% for testimonial in testimonials %}
+                <article class="testimonial-card reveal" {% if forloop.counter0 > 0 %}data-delay="{{ forloop.counter0 }}00"{% endif %}>
+                    <div class="testimonial-rating" aria-label="{{ testimonial.rating }} out of 5 stars">
+                        {% for star in "12345" %}
+                            <span class="{% if forloop.counter <= testimonial.rating %}active{% endif %}"><i class="fa-solid fa-star"></i></span>
+                        {% endfor %}
+                    </div>
+                    <p class="testimonial-comment">"{{ testimonial.comment }}"</p>
+                    <strong>{{ testimonial.customer_name }}</strong>
+                </article>
+            {% empty %}
+                <div class="empty-state">No testimonials available.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="section-divider reveal">
+    <i class="fa-solid fa-scissors"></i>
+</div>

@@ -1,0 +1,31 @@
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <div class="footer-brand">
+            <strong>{{ shop.name|default:"Paradise Barber Shop" }}</strong>
+            <p>Premium grooming crafted with precision and care. Where every cut tells a story.</p>
+        </div>
+        <div class="footer-links">
+            <a href="{% url 'home' %}#about">About</a>
+            <a href="{% url 'home' %}#services">Services</a>
+            <a href="{% url 'home' %}#barbers">Barbers</a>
+            <a href="{% url 'home' %}#testimonials">Reviews</a>
+            <a href="{% url 'home' %}#gallery">Gallery</a>
+            <a href="{% url 'booking' %}">Book Appointment</a>
+            <a href="{% url 'dashboard_index' %}">Barber Login</a>
+        </div>
+        <div class="footer-social">
+            {% if shop.instagram %}
+                <a href="{{ shop.instagram }}" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            {% endif %}
+            {% if shop.tiktok %}
+                <a href="{{ shop.tiktok }}" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container">
+        <div class="footer-bottom">
+            <span>&copy; {% now "Y" %} {{ shop.name|default:"Paradise Barber Shop" }}. All rights reserved.</span>
+            <span>Crafted with pride in Addis Ababa</span>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Staff Login — Paradise Barber Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
+    
+    <style>
+        body {
+            background-color: #0f1115;
+            color: #f0f2f5;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: #161920;
+            border: 1px solid #262933;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .logo-mark {
+            width: 50px; height: 50px;
+            background: #d4af37;
+            color: #000;
+            font-size: 1.6rem;
+            font-weight: 800;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+        }
+        h2 { font-size: 1.5rem; margin-bottom: 8px; color: #fff; }
+        p { color: #8c93a0; font-size: 0.9rem; margin-bottom: 25px; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 6px; }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            background: #1c202a;
+            border: 1px solid #262933;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+        input:focus { outline: none; border-color: #d4af37; }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: #d4af37;
+            color: #000;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        .btn-submit:hover { background: #b5932a; }
+        .alert {
+            padding: 10px 14px;
+            border-radius: 6px;
+            background: rgba(230, 57, 70, 0.2);
+            color: #e63946;
+            border: 1px solid #e63946;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo-mark">P</div>
+        <h2>Barber Staff Login</h2>
+        <p>Enter your credentials to access the shop dashboard.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert"><i class="fa-solid fa-circle-exclamation"></i> {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label><i class="fa-solid fa-user"></i> Username</label>
+                <input type="text" name="username" required placeholder="Enter staff username">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa-solid fa-lock"></i> Password</label>
+                <input type="password" name="password" required placeholder="Enter password">
+            </div>
+
+            <button type="submit" class="btn-submit"><i class="fa-solid fa-right-to-bracket"></i> Log In to Dashboard</button>
+        </form>
+    </div>
+
+</body>
+</html>

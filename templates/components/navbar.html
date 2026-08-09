@@ -1,0 +1,39 @@
+<header class="site-header" id="site-header">
+    <div class="container nav-bar">
+        <a class="brand" href="{% url 'home' %}#top" aria-label="Paradise Barber Shop home">
+            <span class="brand-mark">P</span>
+            <span class="brand-text">
+                <strong>{{ shop.name|default:"Paradise Barber Shop" }}</strong>
+                <small>Luxury Grooming Studio</small>
+            </span>
+        </a>
+
+        <nav class="nav-links" aria-label="Primary navigation">
+            <a href="{% url 'home' %}#about">About</a>
+            <a href="{% url 'home' %}#services">Services</a>
+            <a href="{% url 'home' %}#barbers">Barbers</a>
+            <a href="{% url 'home' %}#testimonials">Reviews</a>
+            <a href="{% url 'home' %}#gallery">Gallery</a>
+            <a href="{% url 'home' %}#contact">Contact</a>
+        </nav>
+
+        <a class="nav-cta" href="{% url 'booking' %}"><i class="fa-solid fa-calendar-check"></i> Book Appointment</a>
+
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</header>
+
+<!-- Mobile navigation overlay -->
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+    <a href="{% url 'home' %}#about">About</a>
+    <a href="{% url 'home' %}#services">Services</a>
+    <a href="{% url 'home' %}#barbers">Barbers</a>
+    <a href="{% url 'home' %}#testimonials">Reviews</a>
+    <a href="{% url 'home' %}#gallery">Gallery</a>
+    <a href="{% url 'home' %}#contact">Contact</a>
+    <a href="{% url 'booking' %}">Book Appointment</a>
+</nav>

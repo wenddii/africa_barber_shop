@@ -1,0 +1,65 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Gallery Management — Barber Dashboard{% endblock %}
+{% block header_title %}Gallery Management{% endblock %}
+
+{% block content %}
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+
+    <!-- GALLERY GRID -->
+    <div class="dashboard-card">
+        <h3 style="margin-bottom: 20px; font-size: 1.1rem; color: #fff;">Existing Gallery Photos</h3>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;">
+            {% for img in images %}
+                <div style="position: relative; border-radius: 8px; overflow: hidden; background: #000; border: 1px solid var(--border-color);">
+                    {% if img.image %}
+                        <img src="{{ img.image.url }}" alt="{{ img.caption }}" style="width: 100%; height: 160px; object-fit: cover; display: block;">
+                    {% endif %}
+                    <div style="padding: 10px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center;">
+                        <small style="color: #ccc; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            {{ img.caption|default:"No caption" }}
+                        </small>
+                        <form method="POST" action="{% url 'dashboard_gallery_delete' img.id %}" onsubmit="return confirm('Delete this image?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" style="padding: 3px 6px; font-size: 0.75rem;">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">
+                    No photos uploaded to the gallery yet.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- UPLOAD FORM -->
+    <div class="dashboard-card">
+        <h3 style="margin-bottom: 20px; font-size: 1.1rem; color: #fff;">Upload New Image</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Image File *</label>
+                {{ form.image }}
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Caption (Optional)</label>
+                {{ form.caption }}
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="width: 100%; padding: 12px; justify-content: center;">
+                <i class="fa-solid fa-upload"></i> Upload Image
+            </button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ shop.name|default:"Paradise Barber Shop" }} — Premium Grooming Experience
+{% endblock %}
+
+{% block content %}
+
+<div class="page-shell">
+    {% include 'components/navbar.html' %}
+
+    <main id="top">
+        {% include 'components/hero.html' %}
+        {% include 'components/services.html' %}
+        {% include 'components/barbers.html' %}
+        {% include 'components/testimonials.html' %}
+        {% include 'components/gallery.html' %}
+        {% include 'components/contact.html' %}
+    </main>
+
+    {% include 'components/footer.html' %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Shop Info & Payment Accounts — Barber Dashboard{% endblock %}
+{% block header_title %}Shop Info & Payment Instructions{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="dashboard-card">
+        <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+            Shop Details & Payment Accounts
+        </h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Shop Name *</label>
+                    {{ form.name }}
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Phone Number *</label>
+                    {{ form.phone_number }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Location / Address *</label>
+                    {{ form.location }}
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Opening Hours *</label>
+                    {{ form.opening_hours }}
+                </div>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Shop Description</label>
+                {{ form.description }}
+            </div>
+
+            <!-- PAYMENT INSTRUCTIONS FOR CUSTOMERS -->
+            <div style="background: rgba(212, 175, 55, 0.05); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h4 style="color: var(--accent-gold); margin-top: 0; margin-bottom: 8px;">
+                    <i class="fa-solid fa-wallet"></i> Customer Payment Instructions & Bank Accounts
+                </h4>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
+                    This text will be shown directly to customers on the booking page before they upload their payment receipt.
+                </p>
+                {{ form.payment_instructions }}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                <div>
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Instagram URL</label>
+                    {{ form.instagram }}
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">TikTok URL</label>
+                    {{ form.tiktok }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="padding: 14px 24px; font-size: 1rem; cursor: pointer;">
+                <i class="fa-solid fa-save"></i> Save Shop Settings
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
