@@ -1,9 +1,9 @@
 <section class="section-pad team-section" id="barbers">
     <div class="container">
         <div class="section-heading reveal">
-            <span class="eyebrow"><i class="fa-solid fa-user-tie"></i> Meet Our Barbers</span>
-            <h2>Skilled hands behind every finish.</h2>
-            <p>Every barber at Paradise brings years of experience, sharp technique, and genuine passion for the craft.</p>
+            <span class="eyebrow"><i class="fa-solid fa-user-tie"></i> {{ t.barbers_eyebrow }}</span>
+            <h2>{{ t.barbers_heading }}</h2>
+            <p>{{ t.barbers_p }}</p>
         </div>
 
         <div class="team-grid">
@@ -21,7 +21,7 @@
                         <h3>{{ barber.name }}</h3>
                         <p class="team-role">{{ barber.role }}</p>
                         <p>{{ barber.bio }}</p>
-                        <a href="{% url 'booking' %}?barber={{ barber.id }}" class="button button-sm button-ghost" style="margin-top: 10px;"><i class="fa-solid fa-calendar-check"></i> Book with {{ barber.name }}</a>
+                        <a href="{% url 'booking' %}?barber={{ barber.id }}" class="button button-sm button-ghost" style="margin-top: 10px;"><i class="fa-solid fa-calendar-check"></i> {{ t.barbers_book_btn }} {{ barber.name }}</a>
                     </div>
                 </article>
             {% empty %}

@@ -114,3 +114,74 @@ class BookingSystemTests(TestCase):
         response = self.client.post(f"/dashboard/bookings/{booking.id}/", {"action": "complete_booking"})
         booking.refresh_from_db()
         self.assertEqual(booking.status, "completed")
+
+    def test_ethiopian_date_and_time_formatting(self):
+        from website.utils import format_date_by_lang, format_time_by_lang
+        from datetime import date, time
+
+        # Test Date: August 10, 2026 -> Ethiopian 2018-12-04 (ሰኞ፣ ነሐሴ 4 2018)
+        dt = date(2026, 8, 10)
+        eth_date_str = format_date_by_lang(dt, lang="am")
+        en_date_str = format_date_by_lang(dt, lang="en")
+
+        self.assertIn("ነሐሴ 4 2018", eth_date_str)
+        self.assertEqual(en_date_str, "Monday, August 10, 2026")
+
+        # Test Time: 10:30 AM -> 4:30 ጧት
+        t1 = time(10, 30)
+        self.assertEqual(format_time_by_lang(t1, lang="am"), "4:30 ጧት")
+        self.assertEqual(format_time_by_lang(t1, lang="en"), "10:30 AM")
+
+        # Test Time: 2:15 PM (14:15) -> 8:15 ከሰዓት
+        t2 = time(14, 15)
+        self.assertEqual(format_time_by_lang(t2, lang="am"), "8:15 ከሰዓት")
+
+    def test_language_switch_endpoint(self):
+        response = self.client.get("/set-language/?lang=am")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.client.session.get("lang"), "am")
+
+        # Verify home page renders with Amharic translations
+        response = self.client.get("/")
+        self.assertContains(response, "ቀጠሮ ይያዙ")
+
+    def test_offline_and_blocked_time_appointments(self):
+        self.client.login(username="barber_admin", password="password123")
+        target_date = date.today() + timedelta(days=1)
+
+        # 1. Create a Walk-In appointment
+        response = self.client.post("/dashboard/bookings/add-offline/", {
+            "booking_source": "walk_in",
+            "customer_name": "Solomon Walkin",
+            "phone_number": "0912345678",
+            "service": self.service.id,
+            "barber": self.barber.id,
+            "appointment_date": target_date.strftime("%Y-%m-%d"),
+            "appointment_time": "11:00",
+        })
+        self.assertEqual(response.status_code, 302)
+
+        # 2. Block time slot at 15:00
+        response = self.client.post("/dashboard/bookings/add-offline/", {
+            "booking_source": "blocked",
+            "customer_name": "Lunch Break",
+            "barber": self.barber.id,
+            "appointment_date": target_date.strftime("%Y-%m-%d"),
+            "appointment_time": "15:00",
+        })
+        self.assertEqual(response.status_code, 302)
+
+        # 3. Verify public API slot logic excludes 11:00 and 15:00 for online customers
+        api_response = self.client.get(f"/api/available-slots/?date={target_date.strftime('%Y-%m-%d')}&service={self.service.id}&barber={self.barber.id}")
+        data = api_response.json()
+        slot_values = [s["value"] for s in data["slots"]]
+        self.assertNotIn("11:00", slot_values)
+        self.assertNotIn("15:00", slot_values)
+
+        # 4. Verify schedule view renders blocked and walk-in statuses
+        sched_response = self.client.get(f"/dashboard/schedule/?date={target_date.strftime('%Y-%m-%d')}")
+        self.assertEqual(sched_response.status_code, 200)
+        self.assertContains(sched_response, "Solomon Walkin")
+        self.assertContains(sched_response, "Lunch Break")
+
+

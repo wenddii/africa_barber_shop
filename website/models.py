@@ -74,16 +74,23 @@ class Booking(models.Model):
         ("completed", "Completed"),
         ("cancelled", "Cancelled"),
     ]
+    BOOKING_SOURCE_CHOICES = [
+        ("online", "Online"),
+        ("phone", "Phone Call"),
+        ("walk_in", "Walk-In"),
+        ("blocked", "Blocked Time"),
+    ]
 
     customer_name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20)
-    service = models.ForeignKey(Service, on_delete=models.PROTECT, related_name="bookings")
+    phone_number = models.CharField(max_length=20, blank=True)
+    service = models.ForeignKey(Service, on_delete=models.PROTECT, related_name="bookings", null=True, blank=True)
     barber = models.ForeignKey(Barber, on_delete=models.SET_NULL, null=True, blank=True, related_name="bookings")
     appointment_date = models.DateField()
     appointment_time = models.TimeField()
-    payment_screenshot = models.ImageField(upload_to="booking_payments/")
+    payment_screenshot = models.ImageField(upload_to="booking_payments/", null=True, blank=True)
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="pending")
     status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default="pending")
+    booking_source = models.CharField(max_length=20, choices=BOOKING_SOURCE_CHOICES, default="online")
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -91,4 +98,5 @@ class Booking(models.Model):
         ordering = ["-appointment_date", "-appointment_time"]
 
     def __str__(self):
-        return f"Booking #{self.id} - {self.customer_name} ({self.appointment_date} {self.appointment_time})"
+        source_lbl = self.get_booking_source_display()
+        return f"Booking #{self.id} [{source_lbl}] - {self.customer_name} ({self.appointment_date} {self.appointment_time})"

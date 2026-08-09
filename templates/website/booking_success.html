@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load ethiopian_tags %}
 
-{% block title %}Booking Confirmation — {{ shop.name|default:"Paradise Barber Shop" }}{% endblock %}
+{% block title %}{{ t.success_title }} — {{ shop.name|default:"Paradise Barber Shop" }}{% endblock %}
 
 {% block content %}
 
@@ -16,35 +17,35 @@
                     <i class="fa-solid fa-circle-check"></i>
                 </div>
 
-                <h2 style="font-size: 2rem; color: #fff; margin-bottom: 10px;">Booking Submitted Successfully!</h2>
+                <h2 style="font-size: 2rem; color: #fff; margin-bottom: 10px;">{{ t.success_title }}</h2>
                 
                 <p style="color: #bbb; font-size: 1.05rem; margin-bottom: 25px;">
-                    Thank you, <strong>{{ booking.customer_name }}</strong>. Your appointment request has been received and is currently 
-                    <span style="background: #4a3800; color: #ffda66; padding: 3px 10px; border-radius: 12px; font-weight: 600;">Pending Verification</span>.
+                    {% if current_lang == 'am' %}
+                        እናመሰግናለን <strong>{{ booking.customer_name }}</strong>። የቀጠሮ ጥያቄዎ ደርሶናል፣ በአሁኑ ወቅት የክፍያ ማረጋገጫ በመጠባበቅ ላይ ይገኛል።
+                    {% else %}
+                        Thank you, <strong>{{ booking.customer_name }}</strong>. Your appointment request has been received and is currently 
+                        <span style="background: #4a3800; color: #ffda66; padding: 3px 10px; border-radius: 12px; font-weight: 600;">Pending Verification</span>.
+                    {% endif %}
                 </p>
 
                 <div style="background: #222; border-radius: 8px; padding: 20px; text-align: left; margin-bottom: 30px;">
-                    <h4 style="color: #d4af37; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px;">Booking Summary</h4>
-                    <p style="margin: 8px 0; color: #ddd;"><strong>Booking ID:</strong> #{{ booking.id }}</p>
-                    <p style="margin: 8px 0; color: #ddd;"><strong>Service:</strong> {{ booking.service.name }} ({{ booking.service.price }} ETB)</p>
+                    <h4 style="color: #d4af37; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px;">{{ t.summary_title }}</h4>
+                    <p style="margin: 8px 0; color: #ddd;"><strong>{{ t.booking_id }}:</strong> #{{ booking.id }}</p>
+                    <p style="margin: 8px 0; color: #ddd;"><strong>{{ t.service_label }}:</strong> {{ booking.service.name }} ({{ booking.service.price }} ETB)</p>
                     {% if booking.barber %}
-                        <p style="margin: 8px 0; color: #ddd;"><strong>Barber:</strong> {{ booking.barber.name }}</p>
+                        <p style="margin: 8px 0; color: #ddd;"><strong>{{ t.barber_label }}:</strong> {{ booking.barber.name }}</p>
                     {% endif %}
-                    <p style="margin: 8px 0; color: #ddd;"><strong>Date:</strong> {{ booking.appointment_date|date:"F j, Y" }}</p>
-                    <p style="margin: 8px 0; color: #ddd;"><strong>Time:</strong> {{ booking.appointment_time|time:"g:i A" }}</p>
-                    <p style="margin: 8px 0; color: #ddd;"><strong>Phone Number:</strong> {{ booking.phone_number }}</p>
-                    <p style="margin: 8px 0; color: #ddd;"><strong>Payment Status:</strong> 
+                    <p style="margin: 8px 0; color: #ddd;"><strong>{{ t.date_label }}:</strong> {{ booking.appointment_date|format_date:current_lang }}</p>
+                    <p style="margin: 8px 0; color: #ddd;"><strong>{{ t.time_label }}:</strong> {{ booking.appointment_time|format_time:current_lang }}</p>
+                    <p style="margin: 8px 0; color: #ddd;"><strong>{{ t.phone_number }}:</strong> {{ booking.phone_number }}</p>
+                    <p style="margin: 8px 0; color: #ddd;"><strong>{{ t.payment_status }}:</strong> 
                         <span style="color: #ffda66; font-weight: 600;">{{ booking.get_payment_status_display }}</span>
                     </p>
                 </div>
 
-                <p style="color: #888; font-size: 0.9rem; margin-bottom: 25px;">
-                    Our barber will review your payment screenshot and confirm your appointment shortly. If we have any questions, we will contact you at <strong>{{ booking.phone_number }}</strong>.
-                </p>
-
                 <div style="display: flex; gap: 15px; justify-content: center;">
-                    <a href="{% url 'home' %}" class="button button-ghost"><i class="fa-solid fa-house"></i> Back to Home</a>
-                    <a href="{% url 'booking' %}" class="button button-primary"><i class="fa-solid fa-plus"></i> Make Another Booking</a>
+                    <a href="{% url 'home' %}" class="button button-ghost"><i class="fa-solid fa-house"></i> {{ t.back_home }}</a>
+                    <a href="{% url 'booking' %}" class="button button-primary"><i class="fa-solid fa-plus"></i> {{ t.another_booking }}</a>
                 </div>
             </div>
         </div>

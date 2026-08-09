@@ -129,3 +129,59 @@ class BarberForm(forms.ModelForm):
             "photo": forms.FileInput(attrs={"class": "form-control", "accept": "image/*"}),
             "bio": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
         }
+
+
+class OfflineBookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = [
+            "booking_source",
+            "customer_name",
+            "phone_number",
+            "service",
+            "barber",
+            "appointment_date",
+            "appointment_time",
+            "notes",
+        ]
+        widgets = {
+            "booking_source": forms.Select(attrs={"class": "form-select", "id": "id_booking_source"}),
+            "customer_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Customer Name / Block Label"}),
+            "phone_number": forms.TextInput(attrs={"class": "form-control", "placeholder": "Phone Number (optional)"}),
+            "service": forms.Select(attrs={"class": "form-select"}),
+            "barber": forms.Select(attrs={"class": "form-select"}),
+            "appointment_date": forms.DateInput(attrs={"class": "form-control", "type": "date", "required": "required"}),
+            "appointment_time": forms.TimeInput(attrs={"class": "form-control", "type": "time", "required": "required"}),
+            "notes": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Notes / Reason"}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        source = cleaned_data.get("booking_source")
+        c_name = cleaned_data.get("customer_name")
+        appt_date = cleaned_data.get("appointment_date")
+        appt_time = cleaned_data.get("appointment_time")
+        barber = cleaned_data.get("barber")
+
+        if source == "blocked" and not c_name:
+            cleaned_data["customer_name"] = "Blocked Time"
+
+        if source in ["phone", "walk_in"] and not c_name:
+            self.add_error("customer_name", "Customer name is required for phone or walk-in appointments.")
+
+        if appt_date and appt_time:
+            query = Booking.objects.filter(
+                appointment_date=appt_date,
+                appointment_time=appt_time,
+                status__in=["pending", "confirmed"],
+            )
+            if barber:
+                query = query.filter(barber=barber)
+
+            if query.exists():
+                self.add_error(
+                    "appointment_time",
+                    "A booking or blocked period already exists for this barber, date, and time slot."
+                )
+
+        return cleaned_data

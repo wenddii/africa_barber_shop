@@ -1,4 +1,5 @@
 {% extends "dashboard/base.html" %}
+{% load ethiopian_tags %}
 
 {% block title %}Booking #{{ booking.id }} Details — Barber Dashboard{% endblock %}
 {% block header_title %}Booking #{{ booking.id }} Details{% endblock %}
@@ -43,11 +44,11 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
                         <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Appointment Date</span>
-                        <strong>{{ booking.appointment_date|date:"F j, Y" }}</strong>
+                        <strong>{{ booking.appointment_date|format_date:current_lang }}</strong>
                     </div>
                     <div>
                         <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Appointment Time</span>
-                        <strong>{{ booking.appointment_time|time:"g:i A" }}</strong>
+                        <strong>{{ booking.appointment_time|format_time:current_lang }}</strong>
                     </div>
                 </div>
 

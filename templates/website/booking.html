@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static ethiopian_tags %}
 
-{% block title %}Book an Appointment — {{ shop.name|default:"Paradise Barber Shop" }}{% endblock %}
+{% block title %}{{ t.booking_title }} — {{ shop.name|default:"Paradise Barber Shop" }}{% endblock %}
 
 {% block content %}
 
@@ -13,8 +13,8 @@
             
             <div class="section-heading" style="text-align: center; margin-bottom: 30px;">
                 <span class="eyebrow"><i class="fa-solid fa-calendar-check"></i> Reservation</span>
-                <h2 style="font-size: 2.2rem; color: #fff;">Book Your Grooming Session</h2>
-                <p style="color: #aaa;">Select your desired service, pick a date & time, upload your payment proof, and confirm.</p>
+                <h2 style="font-size: 2.2rem; color: #fff;">{{ t.booking_title }}</h2>
+                <p style="color: #aaa;">{{ t.booking_subtitle }}</p>
             </div>
 
             {% if messages %}
@@ -34,7 +34,7 @@
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                         <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-scissors" style="color: #d4af37;"></i> 1. Select Service *</label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-scissors" style="color: #d4af37;"></i> {{ t.step_service }}</label>
                             {{ form.service }}
                             {% if form.service.errors %}
                                 <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.service.errors.0 }}</span>
@@ -42,7 +42,7 @@
                         </div>
 
                         <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-user-tie" style="color: #d4af37;"></i> 2. Select Barber (Optional)</label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-user-tie" style="color: #d4af37;"></i> {{ t.step_barber }}</label>
                             {{ form.barber }}
                             {% if form.barber.errors %}
                                 <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.barber.errors.0 }}</span>
@@ -52,7 +52,7 @@
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                         <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-calendar-days" style="color: #d4af37;"></i> 3. Select Date * <small style="color: #888;">(Max 3 days ahead)</small></label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-calendar-days" style="color: #d4af37;"></i> {{ t.step_date }}</label>
                             <input type="date" name="appointment_date" class="form-control" id="id_appointment_date" value="{{ form.appointment_date.value|default:today }}" min="{{ today }}" max="{{ max_date }}" required style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 6px;">
                             {% if form.appointment_date.errors %}
                                 <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.appointment_date.errors.0 }}</span>
@@ -60,9 +60,9 @@
                         </div>
 
                         <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-clock" style="color: #d4af37;"></i> 4. Select Time *</label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-clock" style="color: #d4af37;"></i> {{ t.step_time }}</label>
                             <select name="appointment_time" id="id_appointment_time" class="form-select" required style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 6px;">
-                                <option value="">-- Choose Date & Service First --</option>
+                                <option value="">{{ t.choose_date_first }}</option>
                             </select>
                             {% if form.appointment_time.errors %}
                                 <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.appointment_time.errors.0 }}</span>
@@ -71,14 +71,14 @@
                     </div>
 
                     <div id="slot-loader" style="display: none; color: #d4af37; margin-bottom: 15px; font-size: 0.9rem;">
-                        <i class="fa-solid fa-spinner fa-spin"></i> Checking available time slots...
+                        <i class="fa-solid fa-spinner fa-spin"></i> Loading...
                     </div>
 
                     <hr style="border-color: #333; margin: 25px 0;">
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                         <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-user" style="color: #d4af37;"></i> Your Full Name *</label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-user" style="color: #d4af37;"></i> {{ t.your_name }}</label>
                             {{ form.customer_name }}
                             {% if form.customer_name.errors %}
                                 <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.customer_name.errors.0 }}</span>
@@ -86,7 +86,7 @@
                         </div>
 
                         <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-phone" style="color: #d4af37;"></i> Phone Number *</label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-phone" style="color: #d4af37;"></i> {{ t.phone_number }}</label>
                             {{ form.phone_number }}
                             {% if form.phone_number.errors %}
                                 <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.phone_number.errors.0 }}</span>
@@ -95,29 +95,29 @@
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;">Notes / Special Instructions (Optional)</label>
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;">{{ t.notes_label }}</label>
                         {{ form.notes }}
                     </div>
 
                     <!-- PAYMENT INSTRUCTIONS BOX -->
                     <div style="background: #242217; border: 1px solid #d4af37; border-radius: 8px; padding: 20px; margin: 25px 0;">
-                        <h4 style="color: #d4af37; margin-top: 0; margin-bottom: 10px;"><i class="fa-solid fa-wallet"></i> Payment Instructions</h4>
+                        <h4 style="color: #d4af37; margin-top: 0; margin-bottom: 10px;"><i class="fa-solid fa-wallet"></i> {{ t.payment_title }}</h4>
                         <div style="color: #eee; font-size: 0.95rem; line-height: 1.6; white-space: pre-line;">
-                            {{ shop.payment_instructions|default:"Please contact us or pay via CBE / Telebirr account at shop reception." }}
+                            {{ shop.payment_instructions|default:t.payment_subtitle }}
                         </div>
                     </div>
 
                     <div style="margin-bottom: 25px;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-file-arrow-up" style="color: #d4af37;"></i> Upload Payment Screenshot / Receipt *</label>
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-file-arrow-up" style="color: #d4af37;"></i> {{ t.upload_receipt }}</label>
                         {{ form.payment_screenshot }}
-                        <small style="color: #888; display: block; margin-top: 5px;">Upload a clear image/screenshot of your transfer receipt.</small>
+                        <small style="color: #888; display: block; margin-top: 5px;">{{ t.upload_help }}</small>
                         {% if form.payment_screenshot.errors %}
                             <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.payment_screenshot.errors.0 }}</span>
                         {% endif %}
                     </div>
 
                     <button type="submit" class="button button-primary button-full" style="padding: 14px; font-size: 1.1rem; width: 100%; border-radius: 6px; cursor: pointer;">
-                        <i class="fa-solid fa-paper-plane"></i> Submit Booking & Payment Proof
+                        <i class="fa-solid fa-paper-plane"></i> {{ t.submit_booking }}
                     </button>
                 </form>
             </div>
@@ -135,18 +135,21 @@ document.addEventListener("DOMContentLoaded", function() {
     const timeSelect = document.getElementById("id_appointment_time");
     const loader = document.getElementById("slot-loader");
 
+    const defaultSelectTxt = "{{ t.select_time_default|escapejs }}";
+    const noSlotsTxt = "{{ t.no_slots|escapejs }}";
+
     function fetchAvailableSlots() {
         const dateVal = dateInput.value;
         const serviceVal = serviceSelect.value;
         const barberVal = barberSelect ? barberSelect.value : "";
 
         if (!dateVal || !serviceVal) {
-            timeSelect.innerHTML = '<option value="">-- Choose Date & Service First --</option>';
+            timeSelect.innerHTML = `<option value="">-- {{ t.choose_date_first|escapejs }} --</option>`;
             return;
         }
 
         loader.style.display = "block";
-        timeSelect.innerHTML = '<option value="">Loading slots...</option>';
+        timeSelect.innerHTML = '<option value="">Loading...</option>';
 
         let url = `/api/available-slots/?date=${encodeURIComponent(dateVal)}&service=${encodeURIComponent(serviceVal)}`;
         if (barberVal) {
@@ -162,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (data.slots && data.slots.length > 0) {
                     const defaultOpt = document.createElement("option");
                     defaultOpt.value = "";
-                    defaultOpt.textContent = "-- Select Available Time --";
+                    defaultOpt.textContent = defaultSelectTxt;
                     timeSelect.appendChild(defaultOpt);
 
                     data.slots.forEach(slot => {
@@ -174,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     const opt = document.createElement("option");
                     opt.value = "";
-                    opt.textContent = "No available slots for this date/barber";
+                    opt.textContent = noSlotsTxt;
                     timeSelect.appendChild(opt);
                 }
             })
@@ -189,7 +192,6 @@ document.addEventListener("DOMContentLoaded", function() {
     if (barberSelect) barberSelect.addEventListener("change", fetchAvailableSlots);
     dateInput.addEventListener("change", fetchAvailableSlots);
 
-    // Initial fetch if values are pre-selected
     if (serviceSelect.value && dateInput.value) {
         fetchAvailableSlots();
     }

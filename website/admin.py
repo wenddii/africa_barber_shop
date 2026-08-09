@@ -34,6 +34,7 @@ class BarberAdmin(admin.ModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ("id", "customer_name", "phone_number", "service", "barber", "appointment_date", "appointment_time", "payment_status", "status")
-    list_filter = ("payment_status", "status", "appointment_date", "barber")
-    search_fields = ("customer_name", "phone_number")
+    list_display = ("id", "customer_name", "phone_number", "service", "barber", "appointment_date", "appointment_time", "booking_source", "payment_status", "status")
+    list_filter = ("booking_source", "payment_status", "status", "appointment_date", "barber")
+    search_fields = ("customer_name", "phone_number")
+

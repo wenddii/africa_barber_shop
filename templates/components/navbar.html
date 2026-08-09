@@ -9,31 +9,44 @@
         </a>
 
         <nav class="nav-links" aria-label="Primary navigation">
-            <a href="{% url 'home' %}#about">About</a>
-            <a href="{% url 'home' %}#services">Services</a>
-            <a href="{% url 'home' %}#barbers">Barbers</a>
-            <a href="{% url 'home' %}#testimonials">Reviews</a>
-            <a href="{% url 'home' %}#gallery">Gallery</a>
-            <a href="{% url 'home' %}#contact">Contact</a>
+            <a href="{% url 'home' %}#about">{{ t.nav_about }}</a>
+            <a href="{% url 'home' %}#services">{{ t.nav_services }}</a>
+            <a href="{% url 'home' %}#barbers">{{ t.nav_barbers }}</a>
+            <a href="{% url 'home' %}#testimonials">{{ t.nav_reviews }}</a>
+            <a href="{% url 'home' %}#gallery">{{ t.nav_gallery }}</a>
+            <a href="{% url 'home' %}#contact">{{ t.nav_contact }}</a>
         </nav>
 
-        <a class="nav-cta" href="{% url 'booking' %}"><i class="fa-solid fa-calendar-check"></i> Book Appointment</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <!-- LANGUAGE SWITCHER -->
+            <div class="lang-switcher" style="display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(212,175,55,0.3); font-size: 0.85rem; font-weight: 600;">
+                <a href="{% url 'set_language' %}?lang=en" style="color: {% if current_lang == 'en' %}#d4af37{% else %}#888{% endif %}; text-decoration: none; padding: 2px 6px;">EN</a>
+                <span style="color: #444;">|</span>
+                <a href="{% url 'set_language' %}?lang=am" style="color: {% if current_lang == 'am' %}#d4af37{% else %}#888{% endif %}; text-decoration: none; padding: 2px 6px;">አማ</a>
+            </div>
 
-        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+            <a class="nav-cta" href="{% url 'booking' %}"><i class="fa-solid fa-calendar-check"></i> {{ t.nav_book }}</a>
+
+            <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
     </div>
 </header>
 
 <!-- Mobile navigation overlay -->
 <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
-    <a href="{% url 'home' %}#about">About</a>
-    <a href="{% url 'home' %}#services">Services</a>
-    <a href="{% url 'home' %}#barbers">Barbers</a>
-    <a href="{% url 'home' %}#testimonials">Reviews</a>
-    <a href="{% url 'home' %}#gallery">Gallery</a>
-    <a href="{% url 'home' %}#contact">Contact</a>
-    <a href="{% url 'booking' %}">Book Appointment</a>
+    <a href="{% url 'home' %}#about">{{ t.nav_about }}</a>
+    <a href="{% url 'home' %}#services">{{ t.nav_services }}</a>
+    <a href="{% url 'home' %}#barbers">{{ t.nav_barbers }}</a>
+    <a href="{% url 'home' %}#testimonials">{{ t.nav_reviews }}</a>
+    <a href="{% url 'home' %}#gallery">{{ t.nav_gallery }}</a>
+    <a href="{% url 'home' %}#contact">{{ t.nav_contact }}</a>
+    <a href="{% url 'booking' %}">{{ t.nav_book }}</a>
+    <div style="padding: 15px; text-align: center;">
+        <a href="{% url 'set_language' %}?lang=en" style="color: {% if current_lang == 'en' %}#d4af37{% else %}#fff{% endif %}; margin-right: 15px; font-weight: bold;">English</a>
+        <a href="{% url 'set_language' %}?lang=am" style="color: {% if current_lang == 'am' %}#d4af37{% else %}#fff{% endif %}; font-weight: bold;">አማርኛ</a>
+    </div>
 </nav>

@@ -14,7 +14,9 @@ from .forms import (
     ShopInfoForm,
     GalleryImageForm,
     BarberForm,
+    OfflineBookingForm,
 )
+
 from .models import (
     ShopInfo,
     Service,
@@ -111,10 +113,26 @@ def generate_available_slots(selected_date, service_duration=30, barber_id=None)
     return available_slots
 
 
+from .utils import format_time_by_lang
+
+
+def set_language(request):
+    lang = request.GET.get("lang", "en")
+    if lang not in ["en", "am"]:
+        lang = "en"
+
+    request.session["lang"] = lang
+    next_url = request.META.get("HTTP_REFERER") or "/"
+    response = redirect(next_url)
+    response.set_cookie("lang", lang, max_age=365 * 24 * 60 * 60)
+    return response
+
+
 def available_slots_api(request):
     date_str = request.GET.get("date")
     service_id = request.GET.get("service")
     barber_id = request.GET.get("barber")
+    lang = request.session.get("lang") or request.COOKIES.get("lang") or "en"
 
     if not date_str or not service_id:
         return JsonResponse({"slots": [], "error": "Date and Service are required."})
@@ -138,7 +156,7 @@ def available_slots_api(request):
         t_obj = datetime.strptime(s, "%H:%M").time()
         formatted_slots.append({
             "value": s,
-            "display": t_obj.strftime("%I:%M %p")
+            "display": format_time_by_lang(t_obj, lang)
         })
 
     return JsonResponse({
@@ -147,6 +165,7 @@ def available_slots_api(request):
         "today": date.today().strftime("%Y-%m-%d"),
         "max_date": (date.today() + timedelta(days=3)).strftime("%Y-%m-%d"),
     })
+
 
 
 def booking_create(request):
@@ -262,6 +281,7 @@ def dashboard_index(request):
 def dashboard_bookings(request):
     status_filter = request.GET.get("status", "all")
     payment_filter = request.GET.get("payment", "all")
+    source_filter = request.GET.get("source", "all")
     search_query = request.GET.get("q", "").strip()
 
     bookings = Booking.objects.all()
@@ -271,6 +291,9 @@ def dashboard_bookings(request):
 
     if payment_filter != "all":
         bookings = bookings.filter(payment_status=payment_filter)
+
+    if source_filter != "all":
+        bookings = bookings.filter(booking_source=source_filter)
 
     if search_query:
         bookings = bookings.filter(
@@ -282,9 +305,114 @@ def dashboard_bookings(request):
         "bookings": bookings,
         "status_filter": status_filter,
         "payment_filter": payment_filter,
+        "source_filter": source_filter,
         "search_query": search_query,
     }
     return render(request, "dashboard/bookings.html", context)
+
+
+@login_required
+@user_passes_test(is_staff_user)
+def dashboard_schedule(request):
+    date_str = request.GET.get("date")
+    barber_id = request.GET.get("barber")
+    today = date.today()
+
+    if date_str:
+        try:
+            selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            selected_date = today
+    else:
+        selected_date = today
+
+    barbers = Barber.objects.all()
+    b_id = int(barber_id) if barber_id and barber_id.isdigit() else None
+    selected_barber = Barber.objects.filter(id=b_id).first() if b_id else None
+
+    # Fetch active bookings for that date
+    bookings_qs = Booking.objects.filter(
+        appointment_date=selected_date,
+        status__in=["pending", "confirmed"],
+    )
+    if selected_barber:
+        bookings_qs = bookings_qs.filter(barber=selected_barber)
+
+    # Build 30-minute interval slots from 09:00 to 20:00
+    slots = []
+    start_time = datetime.strptime("09:00", "%H:%M").time()
+    end_time = datetime.strptime("20:00", "%H:%M").time()
+    curr_dt = datetime.combine(selected_date, start_time)
+    end_dt = datetime.combine(selected_date, end_time)
+
+    while curr_dt < end_dt:
+        t_val = curr_dt.time()
+        matching_booking = None
+        for b in bookings_qs:
+            b_dur = b.service.duration if (b.service and b.service.duration) else 30
+            b_start_dt = datetime.combine(selected_date, b.appointment_time)
+            b_end_dt = b_start_dt + timedelta(minutes=b_dur)
+            if b_start_dt <= curr_dt < b_end_dt:
+                matching_booking = b
+                break
+
+        slots.append({
+            "time_str": t_val.strftime("%H:%M"),
+            "time_obj": t_val,
+            "is_booked": matching_booking is not None,
+            "booking": matching_booking,
+        })
+        curr_dt += timedelta(minutes=30)
+
+    context = {
+        "selected_date": selected_date.strftime("%Y-%m-%d"),
+        "today": today.strftime("%Y-%m-%d"),
+        "barbers": barbers,
+        "selected_barber": selected_barber,
+        "slots": slots,
+    }
+    return render(request, "dashboard/schedule.html", context)
+
+
+@login_required
+@user_passes_test(is_staff_user)
+def dashboard_offline_booking_create(request):
+    initial_source = request.GET.get("source", "phone")
+    initial_date = request.GET.get("date", date.today().strftime("%Y-%m-%d"))
+    initial_time = request.GET.get("time", "")
+    initial_barber = request.GET.get("barber", "")
+
+    if request.method == "POST":
+        form = OfflineBookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.payment_status = "verified"
+            booking.status = "confirmed"
+            if booking.booking_source == "blocked" and not booking.customer_name:
+                booking.customer_name = "Blocked Time"
+            booking.save()
+            messages.success(request, f"Offline booking / blocked period recorded for {booking.appointment_date} at {booking.appointment_time}.")
+            return redirect(f"/dashboard/schedule/?date={booking.appointment_date}")
+        else:
+            messages.error(request, "Error saving offline booking. Please check the form errors below.")
+    else:
+        initial_data = {
+            "booking_source": initial_source,
+            "appointment_date": initial_date,
+            "appointment_time": initial_time,
+        }
+        if initial_barber and initial_barber.isdigit():
+            initial_data["barber"] = initial_barber
+
+        form = OfflineBookingForm(initial=initial_data)
+
+    context = {
+        "form": form,
+        "services": Service.objects.all(),
+        "barbers": Barber.objects.all(),
+    }
+    return render(request, "dashboard/offline_booking_form.html", context)
+
 
 
 @login_required
