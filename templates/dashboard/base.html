@@ -743,6 +743,18 @@
             margin-top: 4px;
         }
 
+        /* Ensure input controls do not exceed container bounds */
+        input, select, textarea, button {
+            max-width: 100%;
+        }
+
+        /* Hide mobile sidebar close button on desktop */
+        @media (min-width: 769px) {
+            #sidebar-close-btn {
+                display: none !important;
+            }
+        }
+
         /* ================================================================
            RESPONSIVE — MOBILE (max-width: 768px)
            ================================================================ */
@@ -771,16 +783,19 @@
             /* Main area: no left margin */
             .main-wrapper {
                 margin-left: 0;
+                width: 100%;
+                max-width: 100%;
             }
 
             /* Topbar */
             .topbar {
-                padding: 0 16px;
+                padding: 0 14px;
                 height: 56px;
+                gap: 8px;
             }
 
             .topbar-title {
-                font-size: 0.95rem;
+                font-size: 0.9rem;
                 flex: 1;
                 min-width: 0;
             }
@@ -792,6 +807,8 @@
             /* Content area */
             .content-area {
                 padding: 14px 12px;
+                width: 100%;
+                max-width: 100%;
             }
 
             /* All 2-column grids become single column */
@@ -810,10 +827,11 @@
             }
 
             .stat-card {
-                padding: 14px;
+                padding: 14px 12px;
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
+                min-width: 0;
             }
 
             .stat-card .icon {
@@ -826,11 +844,18 @@
                 font-size: 1.5rem;
             }
 
+            .stat-card .lbl {
+                font-size: 0.75rem;
+                line-height: 1.25;
+                word-break: break-word;
+            }
+
             /* Dashboard cards */
             .dashboard-card {
                 padding: 16px 14px;
                 margin-bottom: 16px;
                 border-radius: 10px;
+                width: 100%;
             }
 
             /* Filters bar */
@@ -895,6 +920,7 @@
         @media (max-width: 640px) {
             .table-responsive {
                 overflow-x: visible;
+                width: 100%;
             }
 
             table.dash-table,
@@ -930,6 +956,13 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
                 font-size: 0.88rem;
                 text-align: right;
+                gap: 8px;
+            }
+
+            table.dash-table td > * {
+                min-width: 0;
+                max-width: 100%;
+                word-break: break-word;
             }
 
             table.dash-table td:last-child {
@@ -947,7 +980,7 @@
                 letter-spacing: 0.5px;
                 color: var(--text-muted);
                 text-align: left;
-                margin-right: 12px;
+                margin-right: 8px;
                 flex-shrink: 0;
             }
 
