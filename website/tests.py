@@ -220,3 +220,69 @@ class BookingSystemTests(TestCase):
         self.shop.refresh_from_db()
         self.assertEqual(self.shop.name, "Paradise Premium Studio")
         self.assertTrue(bool(self.shop.logo))
+
+    def test_customer_booking_tracking(self):
+        today = date.today()
+        # 1. Create a booking with phone number
+        b1 = Booking.objects.create(
+            customer_name="Customer One",
+            phone_number="0911554433",
+            service=self.service,
+            barber=self.barber,
+            appointment_date=today + timedelta(days=1),
+            appointment_time="10:00:00",
+            payment_status="pending",
+            status="pending",
+            notes="Private customer note"
+        )
+        # 2. Create another booking with same phone number
+        b2 = Booking.objects.create(
+            customer_name="Customer One",
+            phone_number="0911554433",
+            service=self.service,
+            barber=self.barber,
+            appointment_date=today + timedelta(days=2),
+            appointment_time="14:00:00",
+            payment_status="verified",
+            status="confirmed"
+        )
+        # 3. Create a booking for another customer
+        b_other = Booking.objects.create(
+            customer_name="Other Customer",
+            phone_number="0988776655",
+            service=self.service,
+            appointment_date=today + timedelta(days=1),
+            appointment_time="15:00:00"
+        )
+
+        # Access track booking page without submitting
+        response = self.client.get("/track/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Track My Booking")
+
+        # Track with phone number (test formatted and exact)
+        response = self.client.get("/track/?phone=0911554433")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Haircut")
+        self.assertContains(response, "Abebe")
+        self.assertContains(response, "Pending")
+        self.assertContains(response, "Confirmed")
+
+        # Privacy checks: DB IDs, private notes, other customer names should not be exposed
+        self.assertNotContains(response, f"#{b1.id}")
+        self.assertNotContains(response, f"#{b2.id}")
+        self.assertNotContains(response, "Private customer note")
+        self.assertNotContains(response, "Other Customer")
+
+        # Test phone number variant (e.g., +251 911 554 433)
+        response_variant = self.client.get("/track/?phone=%2B251911554433")
+        self.assertEqual(response_variant.status_code, 200)
+        self.assertContains(response_variant, "Haircut")
+
+        # Test non-existent phone number
+        response_empty = self.client.get("/track/?phone=0900000000")
+        self.assertEqual(response_empty.status_code, 200)
+        self.assertContains(response_empty, "We couldn't find any bookings for this phone number.")
+        self.assertNotContains(response_empty, "Customer One")
+        self.assertNotContains(response_empty, "Other Customer")
+

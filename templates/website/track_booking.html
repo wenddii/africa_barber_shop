@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Track My Booking — {{ shop.name|default:"Paradise Barber Shop" }}{% endblock %}
+
+{% block content %}
+
+<div class="page-shell">
+    {% include 'components/navbar.html' %}
+
+    <main class="booking-page section-pad" style="min-height: 80vh;">
+        <div class="container" style="max-width: 650px;">
+            
+            <div class="booking-header">
+                <span class="eyebrow"><i class="fa-solid fa-magnifying-glass"></i> Appointment Lookup</span>
+                <h2>Track My Booking</h2>
+                <p>Enter your phone number below to check the status of your grooming appointment.</p>
+            </div>
+
+            <div class="booking-card" style="margin-bottom: 2rem;">
+                <form method="GET" action="{% url 'track_booking' %}">
+                    <div class="booking-form-group" style="margin-bottom: 1.25rem;">
+                        <label class="booking-label">
+                            <i class="fa-solid fa-phone"></i> Phone Number
+                        </label>
+                        <input type="tel" name="phone" class="form-control" placeholder="e.g. 0911223344" value="{{ phone_input }}" required autocomplete="tel">
+                    </div>
+
+                    <button type="submit" class="booking-submit-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i> Track My Booking
+                    </button>
+                </form>
+            </div>
+
+            {% if searched %}
+                <div class="track-results">
+                    {% if bookings %}
+                        <h3 style="color: var(--gold-bright); font-size: 1.1rem; margin-bottom: 1.2rem; font-family: 'Cinzel', serif; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-calendar-check"></i> Your Appointments ({{ bookings|length }})
+                        </h3>
+
+                        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                            {% for b in bookings %}
+                                <div class="booking-card" style="position: relative; {% if b.is_next %}border-color: var(--gold); background: linear-gradient(180deg, rgba(201, 168, 76, 0.08), rgba(255, 255, 255, 0.02));{% endif %}">
+                                    
+                                    {% if b.is_next %}
+                                        <div style="margin-bottom: 1rem;">
+                                            <span class="success-badge">
+                                                <i class="fa-solid fa-star"></i> Next Upcoming Appointment
+                                            </span>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="success-summary" style="margin-bottom: 0;">
+                                        <div class="success-summary-row">
+                                            <span class="success-summary-label"><i class="fa-solid fa-scissors" style="color: var(--gold); margin-right: 6px;"></i> Service</span>
+                                            <span class="success-summary-value">{{ b.service.name|default:"Grooming Session" }}</span>
+                                        </div>
+
+                                        <div class="success-summary-row">
+                                            <span class="success-summary-label"><i class="fa-solid fa-user-tie" style="color: var(--gold); margin-right: 6px;"></i> Barber</span>
+                                            <span class="success-summary-value">{{ b.barber.name|default:"Any Available Barber" }}</span>
+                                        </div>
+
+                                        <div class="success-summary-row">
+                                            <span class="success-summary-label"><i class="fa-solid fa-calendar-days" style="color: var(--gold); margin-right: 6px;"></i> Date</span>
+                                            <span class="success-summary-value">{{ b.appointment_date|date:"l, F j, Y" }}</span>
+                                        </div>
+
+                                        <div class="success-summary-row">
+                                            <span class="success-summary-label"><i class="fa-solid fa-clock" style="color: var(--gold); margin-right: 6px;"></i> Time</span>
+                                            <span class="success-summary-value">{{ b.appointment_time|time:"g:i A" }}</span>
+                                        </div>
+
+                                        <div class="success-summary-row">
+                                            <span class="success-summary-label"><i class="fa-solid fa-info-circle" style="color: var(--gold); margin-right: 6px;"></i> Booking Status</span>
+                                            <span class="success-summary-value status">{{ b.get_status_display }}</span>
+                                        </div>
+
+                                        <div class="success-summary-row">
+                                            <span class="success-summary-label"><i class="fa-solid fa-wallet" style="color: var(--gold); margin-right: 6px;"></i> Payment Status</span>
+                                            <span class="success-summary-value status">{{ b.get_payment_status_display }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="booking-card" style="text-align: center; padding: 2.5rem 1.5rem;">
+                            <div style="font-size: 2.5rem; color: var(--gold); opacity: 0.7; margin-bottom: 1rem;">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </div>
+                            <p style="color: var(--muted); font-size: 1rem; margin-bottom: 1.5rem;">
+                                We couldn't find any bookings for this phone number.
+                            </p>
+                            <a href="{% url 'booking' %}" class="button button-primary">
+                                <i class="fa-solid fa-plus"></i> Book an Appointment
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+    {% include 'components/footer.html' %}
+</div>
+
+{% endblock %}

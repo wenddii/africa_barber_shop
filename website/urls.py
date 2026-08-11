@@ -8,6 +8,7 @@ urlpatterns = [
 
 
     path("booking/success/<int:pk>/", views.booking_success, name="booking_success"),
+    path("track/", views.track_booking, name="track_booking"),
     path("api/available-slots/", views.available_slots_api, name="available_slots_api"),
 
     # Dashboard / Staff routes

@@ -58,8 +58,9 @@
                 </div>
 
                 <div class="success-actions">
-                    <a href="{% url 'home' %}" class="button button-ghost"><i class="fa-solid fa-house"></i> Back to Home</a>
-                    <a href="{% url 'booking' %}" class="button button-primary"><i class="fa-solid fa-plus"></i> Make Another Booking</a>
+                    <a href="{% url 'track_booking' %}?phone={{ booking.phone_number|urlencode }}" class="button button-primary"><i class="fa-solid fa-magnifying-glass"></i> Track My Booking</a>
+                    <a href="{% url 'home' %}" class="button button-ghost"><i class="fa-solid fa-house"></i> Home</a>
+                    <a href="{% url 'booking' %}" class="button button-ghost"><i class="fa-solid fa-plus"></i> New Booking</a>
                 </div>
             </div>
         </div>

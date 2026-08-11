@@ -158,6 +158,60 @@ def booking_success(request, pk):
     return render(request, "website/booking_success.html", context)
 
 
+def normalize_phone_number(phone_str):
+    if not phone_str:
+        return ""
+    digits = "".join([c for c in phone_str if c.isdigit()])
+    if digits.startswith("251") and len(digits) == 12:
+        digits = "0" + digits[3:]
+    elif len(digits) == 9 and digits[0] in ["9", "7"]:
+        digits = "0" + digits
+    return digits
+
+
+def track_booking(request):
+    shop = ShopInfo.objects.first()
+    raw_phone = request.GET.get("phone", "").strip()
+    searched = False
+    bookings_list = []
+
+    if raw_phone:
+        searched = True
+        norm_input = normalize_phone_number(raw_phone)
+
+        # Exclude blocked administrative periods
+        all_bookings = Booking.objects.exclude(booking_source="blocked").select_related("service", "barber")
+
+        matched_bookings = []
+        for b in all_bookings:
+            b_norm = normalize_phone_number(b.phone_number)
+            if norm_input and b_norm and (norm_input == b_norm or norm_input in b_norm or b_norm in norm_input):
+                matched_bookings.append(b)
+            elif raw_phone in b.phone_number:
+                matched_bookings.append(b)
+
+        today = date.today()
+        upcoming = [b for b in matched_bookings if b.appointment_date >= today]
+        past = [b for b in matched_bookings if b.appointment_date < today]
+
+        upcoming.sort(key=lambda x: (x.appointment_date, x.appointment_time))
+        past.sort(key=lambda x: (x.appointment_date, x.appointment_time), reverse=True)
+
+        if upcoming:
+            upcoming[0].is_next = True
+
+        bookings_list = upcoming + past
+
+    context = {
+        "shop": shop,
+        "phone_input": raw_phone,
+        "searched": searched,
+        "bookings": bookings_list,
+    }
+    return render(request, "website/track_booking.html", context)
+
+
+
 # ==============================================================================
 # STAFF / BARBER DASHBOARD VIEWS
 # ==============================================================================
