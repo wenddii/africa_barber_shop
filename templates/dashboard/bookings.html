@@ -33,13 +33,15 @@
                 <option value="rejected" {% if payment_filter == 'rejected' %}selected{% endif %}>Rejected</option>
             </select>
 
-            <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-search"></i> Filter</button>
-            {% if search_query or status_filter != 'all' or payment_filter != 'all' or source_filter != 'all' %}
-                <a href="{% url 'dashboard_bookings' %}" class="btn btn-outline">Clear</a>
-            {% endif %}
+            <div style="display: flex; gap: 8px; width: 100%;">
+                <button type="submit" class="btn btn-secondary" style="flex: 1;"><i class="fa-solid fa-search"></i> Filter</button>
+                {% if search_query or status_filter != 'all' or payment_filter != 'all' or source_filter != 'all' %}
+                    <a href="{% url 'dashboard_bookings' %}" class="btn btn-outline">Clear</a>
+                {% endif %}
+            </div>
         </form>
 
-        <a href="{% url 'dashboard_offline_booking_create' %}" class="btn btn-gold">
+        <a href="{% url 'dashboard_offline_booking_create' %}" class="btn btn-gold" style="width: 100%; justify-content: center;">
             <i class="fa-solid fa-plus-circle"></i> Add Offline / Block
         </a>
     </div>
@@ -63,8 +65,8 @@
             <tbody>
                 {% for b in bookings %}
                     <tr>
-                        <td><strong>#{{ b.id }}</strong></td>
-                        <td>
+                        <td data-label="# ID"><strong>#{{ b.id }}</strong></td>
+                        <td data-label="Source">
                             {% if b.booking_source == 'blocked' %}
                                 <span class="badge badge-cancelled"><i class="fa-solid fa-ban"></i> Blocked</span>
                             {% elif b.booking_source == 'walk_in' %}
@@ -75,25 +77,25 @@
                                 <span class="badge badge-confirmed">Online</span>
                             {% endif %}
                         </td>
-                        <td><strong>{{ b.customer_name }}</strong></td>
-                        <td>{{ b.phone_number|default:"-" }}</td>
-                        <td>{{ b.service.name|default:"Blocked Period" }}</td>
-                        <td>{{ b.barber.name|default:"Any Barber" }}</td>
-                        <td>
+                        <td data-label="Customer"><strong>{{ b.customer_name }}</strong></td>
+                        <td data-label="Phone">{{ b.phone_number|default:"-" }}</td>
+                        <td data-label="Service">{{ b.service.name|default:"Blocked Period" }}</td>
+                        <td data-label="Barber">{{ b.barber.name|default:"Any Barber" }}</td>
+                        <td data-label="Date & Time">
                             <div>{{ b.appointment_date|date:"M d, Y" }}</div>
                             <small style="color: var(--text-muted);">{{ b.appointment_time|time:"g:i A" }}</small>
                         </td>
-                        <td>
+                        <td data-label="Payment">
                             <span class="badge badge-{{ b.payment_status }}">
                                 {{ b.get_payment_status_display }}
                             </span>
                         </td>
-                        <td>
+                        <td data-label="Status">
                             <span class="badge badge-{{ b.status }}">
                                 {{ b.get_status_display }}
                             </span>
                         </td>
-                        <td>
+                        <td data-label="Action">
                             <a href="{% url 'dashboard_booking_detail' b.id %}" class="btn btn-gold btn-sm">
                                 Manage
                             </a>

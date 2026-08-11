@@ -8,14 +8,14 @@
 <div class="dashboard-card">
     <div class="filters-bar">
         <form method="GET" class="filters-group" style="align-items: flex-end;">
-            <div>
+            <div style="flex: 1; min-width: 140px;">
                 <label class="dash-form-label">Select Date</label>
-                <input type="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()" class="form-control" style="margin-bottom: 0; min-width: 160px;">
+                <input type="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()" class="form-control" style="margin-bottom: 0;">
             </div>
 
-            <div>
+            <div style="flex: 1; min-width: 140px;">
                 <label class="dash-form-label">Filter Barber</label>
-                <select name="barber" onchange="this.form.submit()" class="form-select" style="margin-bottom: 0; min-width: 160px;">
+                <select name="barber" onchange="this.form.submit()" class="form-select" style="margin-bottom: 0;">
                     <option value="">All Barbers</option>
                     {% for b in barbers %}
                         <option value="{{ b.id }}" {% if selected_barber and selected_barber.id == b.id %}selected{% endif %}>{{ b.name }}</option>
@@ -23,13 +23,13 @@
                 </select>
             </div>
 
-            <div style="display: flex; gap: 6px;">
-                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-filter"></i> Apply</button>
+            <div style="display: flex; gap: 8px; width: 100%;">
+                <button type="submit" class="btn btn-secondary" style="flex: 1;"><i class="fa-solid fa-filter"></i> Apply</button>
                 <a href="{% url 'dashboard_schedule' %}" class="btn btn-outline">Today</a>
             </div>
         </form>
 
-        <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}" class="btn btn-gold">
+        <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}" class="btn btn-gold" style="width: 100%; justify-content: center;">
             <i class="fa-solid fa-plus-circle"></i> Add Offline / Block
         </a>
     </div>
@@ -55,12 +55,12 @@
             <tbody>
                 {% for slot in slots %}
                     <tr class="{% if slot.is_booked %}schedule-row-booked{% endif %}">
-                        <td>
+                        <td data-label="Time Slot">
                             <strong>{{ slot.time_obj|time:"g:i A" }}</strong>
                             <small style="display: block; color: var(--text-muted); font-size: 0.72rem;">({{ slot.time_str }})</small>
                         </td>
 
-                        <td>
+                        <td data-label="Status">
                             {% if slot.is_booked %}
                                 {% if slot.booking.booking_source == 'blocked' %}
                                     <span class="badge badge-cancelled">
@@ -86,7 +86,7 @@
                             {% endif %}
                         </td>
 
-                        <td>
+                        <td data-label="Details">
                             {% if slot.is_booked %}
                                 <div>
                                     <strong style="color: #fff;">{{ slot.booking.customer_name }}</strong>
@@ -103,13 +103,13 @@
                             {% endif %}
                         </td>
 
-                        <td style="text-align: right;">
+                        <td data-label="Actions" style="text-align: right;">
                             {% if slot.is_booked %}
                                 <a href="{% url 'dashboard_booking_detail' slot.booking.id %}" class="btn btn-secondary btn-sm">
                                     Manage
                                 </a>
                             {% else %}
-                                <div style="display: inline-flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
+                                <div style="display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
                                     <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}&time={{ slot.time_str }}&source=phone{% if selected_barber %}&barber={{ selected_barber.id }}{% endif %}" class="btn btn-secondary btn-sm">
                                         <i class="fa-solid fa-phone"></i> Book
                                     </a>
