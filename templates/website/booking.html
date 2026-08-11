@@ -8,116 +8,137 @@
 <div class="page-shell">
     {% include 'components/navbar.html' %}
 
-    <main class="section-pad" style="background: #0f0f0f; min-height: 80vh; color: #fff;">
-        <div class="container" style="max-width: 800px; margin: 0 auto;">
+    <main class="booking-page section-pad">
+        <div class="container">
             
-            <div class="section-heading" style="text-align: center; margin-bottom: 30px;">
+            <div class="booking-header">
                 <span class="eyebrow"><i class="fa-solid fa-calendar-check"></i> Reservation</span>
-                <h2 style="font-size: 2.2rem; color: #fff;">Book Your Grooming Session</h2>
-                <p style="color: #aaa;">Select your desired service, pick a date & time, upload your payment proof, and confirm.</p>
+                <h2>Book Your Grooming Session</h2>
+                <p>Select your desired service, pick a date &amp; time, upload your payment proof, and confirm.</p>
             </div>
 
             {% if messages %}
-                <div style="margin-bottom: 20px;">
+                <div class="booking-alerts">
                     {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}" style="padding: 12px 18px; border-radius: 8px; margin-bottom: 10px; background: {% if message.tags == 'error' %}#4a1515{% else %}#154a21{% endif %}; color: #fff;">
+                        <div class="booking-alert booking-alert-{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                            <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
                             {{ message }}
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
 
-            <div class="booking-card" style="background: #181818; border: 1px solid #333; border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <div class="booking-card">
                 
                 <form method="POST" enctype="multipart/form-data" id="bookingForm">
                     {% csrf_token %}
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-scissors" style="color: #d4af37;"></i> 1. Select Service *</label>
+                    <div class="booking-form-row">
+                        <div class="booking-form-group">
+                            <label class="booking-label">
+                                <span class="step-num">1</span>
+                                <i class="fa-solid fa-scissors"></i> Select Service *
+                            </label>
                             {{ form.service }}
                             {% if form.service.errors %}
-                                <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.service.errors.0 }}</span>
+                                <span class="booking-field-error">{{ form.service.errors.0 }}</span>
                             {% endif %}
                         </div>
 
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-user-tie" style="color: #d4af37;"></i> 2. Select Barber (Optional)</label>
+                        <div class="booking-form-group">
+                            <label class="booking-label">
+                                <span class="step-num">2</span>
+                                <i class="fa-solid fa-user-tie"></i> Select Barber (Optional)
+                            </label>
                             {{ form.barber }}
                             {% if form.barber.errors %}
-                                <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.barber.errors.0 }}</span>
+                                <span class="booking-field-error">{{ form.barber.errors.0 }}</span>
                             {% endif %}
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-calendar-days" style="color: #d4af37;"></i> 3. Select Date * (Max 3 days ahead)</label>
-                            <input type="date" name="appointment_date" class="form-control" id="id_appointment_date" value="{{ form.appointment_date.value|default:today }}" min="{{ today }}" max="{{ max_date }}" required style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 6px;">
+                    <div class="booking-form-row">
+                        <div class="booking-form-group">
+                            <label class="booking-label">
+                                <span class="step-num">3</span>
+                                <i class="fa-solid fa-calendar-days"></i> Select Date * <small style="font-weight: 400; opacity: 0.7;">(Max 3 days)</small>
+                            </label>
+                            <input type="date" name="appointment_date" class="form-control" id="id_appointment_date" value="{{ form.appointment_date.value|default:today }}" min="{{ today }}" max="{{ max_date }}" required>
                             {% if form.appointment_date.errors %}
-                                <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.appointment_date.errors.0 }}</span>
+                                <span class="booking-field-error">{{ form.appointment_date.errors.0 }}</span>
                             {% endif %}
                         </div>
 
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-clock" style="color: #d4af37;"></i> 4. Select Time *</label>
-                            <select name="appointment_time" id="id_appointment_time" class="form-select" required style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 6px;">
-                                <option value="">-- Choose Date & Service First --</option>
+                        <div class="booking-form-group">
+                            <label class="booking-label">
+                                <span class="step-num">4</span>
+                                <i class="fa-solid fa-clock"></i> Select Time *
+                            </label>
+                            <select name="appointment_time" id="id_appointment_time" class="form-select" required>
+                                <option value="">-- Choose Date &amp; Service First --</option>
                             </select>
                             {% if form.appointment_time.errors %}
-                                <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.appointment_time.errors.0 }}</span>
+                                <span class="booking-field-error">{{ form.appointment_time.errors.0 }}</span>
                             {% endif %}
                         </div>
                     </div>
 
-                    <div id="slot-loader" style="display: none; color: #d4af37; margin-bottom: 15px; font-size: 0.9rem;">
+                    <div id="slot-loader" class="booking-slot-loader">
                         <i class="fa-solid fa-spinner fa-spin"></i> Loading available slots...
                     </div>
 
-                    <hr style="border-color: #333; margin: 25px 0;">
+                    <hr class="booking-divider">
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-user" style="color: #d4af37;"></i> Your Full Name *</label>
+                    <div class="booking-form-row">
+                        <div class="booking-form-group">
+                            <label class="booking-label">
+                                <i class="fa-solid fa-user"></i> Your Full Name *
+                            </label>
                             {{ form.customer_name }}
                             {% if form.customer_name.errors %}
-                                <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.customer_name.errors.0 }}</span>
+                                <span class="booking-field-error">{{ form.customer_name.errors.0 }}</span>
                             {% endif %}
                         </div>
 
-                        <div>
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-phone" style="color: #d4af37;"></i> Phone Number *</label>
+                        <div class="booking-form-group">
+                            <label class="booking-label">
+                                <i class="fa-solid fa-phone"></i> Phone Number *
+                            </label>
                             {{ form.phone_number }}
                             {% if form.phone_number.errors %}
-                                <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.phone_number.errors.0 }}</span>
+                                <span class="booking-field-error">{{ form.phone_number.errors.0 }}</span>
                             {% endif %}
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;">Notes / Special Instructions (Optional)</label>
+                    <div class="booking-form-group" style="margin-bottom: 1.25rem;">
+                        <label class="booking-label">Notes / Special Instructions (Optional)</label>
                         {{ form.notes }}
                     </div>
 
                     <!-- PAYMENT INSTRUCTIONS BOX -->
-                    <div style="background: #242217; border: 1px solid #d4af37; border-radius: 8px; padding: 20px; margin: 25px 0;">
-                        <h4 style="color: #d4af37; margin-top: 0; margin-bottom: 10px;"><i class="fa-solid fa-wallet"></i> Payment Instructions</h4>
-                        <div style="color: #eee; font-size: 0.95rem; line-height: 1.6; white-space: pre-line;">
+                    <div class="payment-instructions-box">
+                        <h4><i class="fa-solid fa-wallet"></i> Payment Instructions</h4>
+                        <div class="payment-instructions-content">
                             {{ shop.payment_instructions|default:"Please transfer the service amount before completing your booking." }}
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 25px;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #ddd;"><i class="fa-solid fa-file-arrow-up" style="color: #d4af37;"></i> Upload Payment Screenshot / Receipt *</label>
+                    <div class="booking-file-upload">
+                        <label class="booking-label">
+                            <i class="fa-solid fa-file-arrow-up"></i> Upload Payment Screenshot / Receipt *
+                        </label>
                         {{ form.payment_screenshot }}
-                        <small style="color: #888; display: block; margin-top: 5px;">Upload a clear image/screenshot of your transfer receipt.</small>
+                        <div class="booking-file-hint">
+                            <i class="fa-solid fa-circle-info"></i> Upload a clear image/screenshot of your transfer receipt.
+                        </div>
                         {% if form.payment_screenshot.errors %}
-                            <span style="color: #ff6b6b; font-size: 0.85rem;">{{ form.payment_screenshot.errors.0 }}</span>
+                            <span class="booking-field-error">{{ form.payment_screenshot.errors.0 }}</span>
                         {% endif %}
                     </div>
 
-                    <button type="submit" class="button button-primary button-full" style="padding: 14px; font-size: 1.1rem; width: 100%; border-radius: 6px; cursor: pointer;">
-                        <i class="fa-solid fa-paper-plane"></i> Submit Booking & Payment Proof
+                    <button type="submit" class="booking-submit-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Booking &amp; Payment Proof
                     </button>
                 </form>
             </div>
@@ -141,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const barberVal = barberSelect ? barberSelect.value : "";
 
         if (!dateVal || !serviceVal) {
-            timeSelect.innerHTML = `<option value="">-- Choose Date & Service First --</option>`;
+            timeSelect.innerHTML = `<option value="">-- Choose Date &amp; Service First --</option>`;
             return;
         }
 

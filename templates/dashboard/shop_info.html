@@ -7,7 +7,7 @@
 
 <div style="max-width: 800px; margin: 0 auto;">
     <div class="dashboard-card">
-        <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <h3 style="margin-bottom: 18px; font-size: 1.1rem; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
             Shop Details, Logo & Branding
         </h3>
 
@@ -15,77 +15,71 @@
             {% csrf_token %}
 
             <!-- LOGO UPLOAD & PREVIEW SECTION -->
-            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                <h4 style="color: #fff; margin-top: 0; margin-bottom: 10px; font-size: 1rem;">
-                    <i class="fa-solid fa-image" style="color: var(--accent-gold);"></i> Barbershop Logo
-                </h4>
-                <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+            <div class="logo-section">
+                <h4><i class="fa-solid fa-image"></i> Barbershop Logo</h4>
+                <div class="logo-preview-wrap">
                     {% if shop and shop.logo %}
-                        <div style="text-align: center;">
-                            <img src="{{ shop.logo.url }}" alt="{{ shop.name }}" style="max-height: 70px; max-width: 180px; object-fit: contain; background: #111; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color);">
-                            <small style="display: block; color: var(--text-muted); margin-top: 4px;">Current Logo</small>
+                        <div class="current-logo">
+                            <img src="{{ shop.logo.url }}" alt="{{ shop.name }}">
+                            <small>Current Logo</small>
                         </div>
                     {% endif %}
-                    <div style="flex: 1; min-width: 240px;">
-                        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Upload / Replace Logo (PNG or SVG recommended)</label>
+                    <div class="logo-upload-field">
+                        <label class="dash-form-label">Upload / Replace Logo (PNG or SVG recommended)</label>
                         {{ form.logo }}
                         {% if form.logo.errors %}
-                            <span style="color: var(--danger); font-size: 0.8rem;">{{ form.logo.errors.0 }}</span>
+                            <span class="dash-form-error">{{ form.logo.errors.0 }}</span>
                         {% endif %}
                     </div>
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="dash-form-row">
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Shop Name *</label>
+                    <label class="dash-form-label">Shop Name *</label>
                     {{ form.name }}
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Phone Number *</label>
+                    <label class="dash-form-label">Phone Number *</label>
                     {{ form.phone_number }}
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="dash-form-row">
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Location / Address *</label>
+                    <label class="dash-form-label">Location / Address *</label>
                     {{ form.location }}
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Opening Hours *</label>
+                    <label class="dash-form-label">Opening Hours *</label>
                     {{ form.opening_hours }}
                 </div>
             </div>
 
-            <div style="margin-bottom: 16px;">
-                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Shop Description</label>
+            <div class="dash-form-group">
+                <label class="dash-form-label">Shop Description</label>
                 {{ form.description }}
             </div>
 
             <!-- PAYMENT INSTRUCTIONS FOR CUSTOMERS -->
-            <div style="background: rgba(212, 175, 55, 0.05); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                <h4 style="color: var(--accent-gold); margin-top: 0; margin-bottom: 8px;">
-                    <i class="fa-solid fa-wallet"></i> Customer Payment Instructions & Bank Accounts
-                </h4>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
-                    This text will be shown directly to customers on the booking page before they upload their payment receipt.
-                </p>
+            <div class="payment-box">
+                <h4><i class="fa-solid fa-wallet"></i> Customer Payment Instructions & Bank Accounts</h4>
+                <p>This text will be shown directly to customers on the booking page before they upload their payment receipt.</p>
                 {{ form.payment_instructions }}
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+            <div class="dash-form-row">
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Instagram URL</label>
+                    <label class="dash-form-label">Instagram URL</label>
                     {{ form.instagram }}
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">TikTok URL</label>
+                    <label class="dash-form-label">TikTok URL</label>
                     {{ form.tiktok }}
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-gold" style="padding: 14px 24px; font-size: 1rem; cursor: pointer;">
+            <button type="submit" class="btn btn-gold" style="padding: 14px 24px; font-size: 1rem; cursor: pointer; margin-top: 8px;">
                 <i class="fa-solid fa-save"></i> Save Shop Settings
             </button>
         </form>

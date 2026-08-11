@@ -6,11 +6,11 @@
 {% block content %}
 
 <div class="dashboard-card">
-    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px;">
-        <form method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; flex: 1;">
-            <input type="text" name="q" placeholder="Search by name or phone..." value="{{ search_query }}" class="form-control" style="max-width: 220px; margin-bottom: 0;">
+    <div class="filters-bar">
+        <form method="GET" class="filters-group">
+            <input type="text" name="q" placeholder="Search name or phone..." value="{{ search_query }}" class="form-control">
 
-            <select name="status" class="form-select" onchange="this.form.submit()" style="max-width: 150px; margin-bottom: 0;">
+            <select name="status" class="form-select" onchange="this.form.submit()">
                 <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Statuses</option>
                 <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
                 <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
@@ -18,7 +18,7 @@
                 <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
             </select>
 
-            <select name="source" class="form-select" onchange="this.form.submit()" style="max-width: 150px; margin-bottom: 0;">
+            <select name="source" class="form-select" onchange="this.form.submit()">
                 <option value="all" {% if source_filter == 'all' %}selected{% endif %}>All Sources</option>
                 <option value="online" {% if source_filter == 'online' %}selected{% endif %}>Online</option>
                 <option value="phone" {% if source_filter == 'phone' %}selected{% endif %}>Phone Call</option>
@@ -26,7 +26,7 @@
                 <option value="blocked" {% if source_filter == 'blocked' %}selected{% endif %}>Blocked Time</option>
             </select>
 
-            <select name="payment" class="form-select" onchange="this.form.submit()" style="max-width: 170px; margin-bottom: 0;">
+            <select name="payment" class="form-select" onchange="this.form.submit()">
                 <option value="all" {% if payment_filter == 'all' %}selected{% endif %}>All Payments</option>
                 <option value="pending" {% if payment_filter == 'pending' %}selected{% endif %}>Pending Verification</option>
                 <option value="verified" {% if payment_filter == 'verified' %}selected{% endif %}>Verified</option>
@@ -35,12 +35,12 @@
 
             <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-search"></i> Filter</button>
             {% if search_query or status_filter != 'all' or payment_filter != 'all' or source_filter != 'all' %}
-                <a href="{% url 'dashboard_bookings' %}" class="btn btn-secondary" style="background: transparent; color: var(--text-muted);">Clear</a>
+                <a href="{% url 'dashboard_bookings' %}" class="btn btn-outline">Clear</a>
             {% endif %}
         </form>
 
         <a href="{% url 'dashboard_offline_booking_create' %}" class="btn btn-gold">
-            <i class="fa-solid fa-plus-circle"></i> Add Offline / Block Time
+            <i class="fa-solid fa-plus-circle"></i> Add Offline / Block
         </a>
     </div>
 
@@ -66,7 +66,7 @@
                         <td><strong>#{{ b.id }}</strong></td>
                         <td>
                             {% if b.booking_source == 'blocked' %}
-                                <span class="badge badge-cancelled" style="background: rgba(230, 57, 70, 0.2); color: #e63946;">Blocked</span>
+                                <span class="badge badge-cancelled"><i class="fa-solid fa-ban"></i> Blocked</span>
                             {% elif b.booking_source == 'walk_in' %}
                                 <span class="badge" style="background: rgba(233, 196, 106, 0.2); color: #e9c46a;">Walk-In</span>
                             {% elif b.booking_source == 'phone' %}
@@ -94,14 +94,14 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{% url 'dashboard_booking_detail' b.id %}" class="btn btn-gold" style="padding: 4px 10px; font-size: 0.8rem;">
+                            <a href="{% url 'dashboard_booking_detail' b.id %}" class="btn btn-gold btn-sm">
                                 Manage
                             </a>
                         </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                        <td colspan="10" class="empty-cell">
                             No bookings found matching your criteria.
                         </td>
                     </tr>

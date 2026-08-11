@@ -6,16 +6,16 @@
 {% block content %}
 
 <div class="dashboard-card">
-    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
-        <form method="GET" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+    <div class="filters-bar">
+        <form method="GET" class="filters-group" style="align-items: flex-end;">
             <div>
-                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Select Date</label>
-                <input type="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()" class="form-control" style="margin-bottom: 0; min-width: 170px;">
+                <label class="dash-form-label">Select Date</label>
+                <input type="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()" class="form-control" style="margin-bottom: 0; min-width: 160px;">
             </div>
 
             <div>
-                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Filter Barber</label>
-                <select name="barber" onchange="this.form.submit()" class="form-select" style="margin-bottom: 0; min-width: 180px;">
+                <label class="dash-form-label">Filter Barber</label>
+                <select name="barber" onchange="this.form.submit()" class="form-select" style="margin-bottom: 0; min-width: 160px;">
                     <option value="">All Barbers</option>
                     {% for b in barbers %}
                         <option value="{{ b.id }}" {% if selected_barber and selected_barber.id == b.id %}selected{% endif %}>{{ b.name }}</option>
@@ -23,21 +23,19 @@
                 </select>
             </div>
 
-            <div style="align-self: flex-end;">
+            <div style="display: flex; gap: 6px;">
                 <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-filter"></i> Apply</button>
-                <a href="{% url 'dashboard_schedule' %}" class="btn btn-secondary" style="background: transparent; color: var(--text-muted);">Today</a>
+                <a href="{% url 'dashboard_schedule' %}" class="btn btn-outline">Today</a>
             </div>
         </form>
 
-        <div>
-            <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}" class="btn btn-gold">
-                <i class="fa-solid fa-plus-circle"></i> Add Offline Booking / Block Time
-            </a>
-        </div>
+        <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}" class="btn btn-gold">
+            <i class="fa-solid fa-plus-circle"></i> Add Offline / Block
+        </a>
     </div>
 
-    <div style="margin-bottom: 15px;">
-        <h4 style="color: #fff; font-size: 1.1rem;">
+    <div style="margin-bottom: 14px;">
+        <h4 style="color: #fff; font-size: 1.05rem;">
             Schedule for {{ selected_date }}
             {% if selected_barber %} — {{ selected_barber.name }}{% endif %}
         </h4>
@@ -48,24 +46,24 @@
         <table class="dash-table">
             <thead>
                 <tr>
-                    <th style="width: 120px;">Time Slot</th>
-                    <th style="width: 150px;">Status</th>
+                    <th style="width: 110px;">Time Slot</th>
+                    <th style="width: 130px;">Status</th>
                     <th>Appointment / Block Details</th>
                     <th style="text-align: right;">Quick Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for slot in slots %}
-                    <tr style="{% if slot.is_booked %}background: rgba(212, 175, 55, 0.03);{% endif %}">
+                    <tr class="{% if slot.is_booked %}schedule-row-booked{% endif %}">
                         <td>
                             <strong>{{ slot.time_obj|time:"g:i A" }}</strong>
-                            <small style="display: block; color: var(--text-muted); font-size: 0.75rem;">({{ slot.time_str }})</small>
+                            <small style="display: block; color: var(--text-muted); font-size: 0.72rem;">({{ slot.time_str }})</small>
                         </td>
 
                         <td>
                             {% if slot.is_booked %}
                                 {% if slot.booking.booking_source == 'blocked' %}
-                                    <span class="badge badge-cancelled" style="background: rgba(230, 57, 70, 0.2); color: #e63946;">
+                                    <span class="badge badge-cancelled">
                                         <i class="fa-solid fa-ban"></i> Blocked
                                     </span>
                                 {% elif slot.booking.booking_source == 'walk_in' %}
@@ -74,7 +72,7 @@
                                     </span>
                                 {% elif slot.booking.booking_source == 'phone' %}
                                     <span class="badge" style="background: rgba(155, 93, 229, 0.2); color: #9b5de5;">
-                                        <i class="fa-solid fa-phone"></i> Phone Call
+                                        <i class="fa-solid fa-phone"></i> Phone
                                     </span>
                                 {% else %}
                                     <span class="badge badge-confirmed">
@@ -93,30 +91,30 @@
                                 <div>
                                     <strong style="color: #fff;">{{ slot.booking.customer_name }}</strong>
                                     {% if slot.booking.phone_number %}
-                                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 8px;"><i class="fa-solid fa-phone"></i> {{ slot.booking.phone_number }}</span>
+                                        <span style="color: var(--text-muted); font-size: 0.82rem; margin-left: 6px;"><i class="fa-solid fa-phone"></i> {{ slot.booking.phone_number }}</span>
                                     {% endif %}
                                 </div>
-                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
+                                <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
                                     {% if slot.booking.service %}{{ slot.booking.service.name }} ({{ slot.booking.service.duration }} mins){% else %}Blocked Period{% endif %}
                                     {% if slot.booking.barber %} | Barber: {{ slot.booking.barber.name }}{% endif %}
                                 </div>
                             {% else %}
-                                <span style="color: var(--text-muted); font-size: 0.85rem; italic;">Open for online or offline booking</span>
+                                <span style="color: var(--text-muted); font-size: 0.82rem;">Open for booking</span>
                             {% endif %}
                         </td>
 
                         <td style="text-align: right;">
                             {% if slot.is_booked %}
-                                <a href="{% url 'dashboard_booking_detail' slot.booking.id %}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">
+                                <a href="{% url 'dashboard_booking_detail' slot.booking.id %}" class="btn btn-secondary btn-sm">
                                     Manage
                                 </a>
                             {% else %}
-                                <div style="display: inline-flex; gap: 6px;">
-                                    <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}&time={{ slot.time_str }}&source=phone{% if selected_barber %}&barber={{ selected_barber.id }}{% endif %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;">
-                                        <i class="fa-solid fa-phone"></i> Phone / Walk-in
+                                <div style="display: inline-flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
+                                    <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}&time={{ slot.time_str }}&source=phone{% if selected_barber %}&barber={{ selected_barber.id }}{% endif %}" class="btn btn-secondary btn-sm">
+                                        <i class="fa-solid fa-phone"></i> Book
                                     </a>
-                                    <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}&time={{ slot.time_str }}&source=blocked{% if selected_barber %}&barber={{ selected_barber.id }}{% endif %}" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;">
-                                        <i class="fa-solid fa-lock"></i> Block Time
+                                    <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}&time={{ slot.time_str }}&source=blocked{% if selected_barber %}&barber={{ selected_barber.id }}{% endif %}" class="btn btn-danger btn-sm">
+                                        <i class="fa-solid fa-lock"></i> Block
                                     </a>
                                 </div>
                             {% endif %}

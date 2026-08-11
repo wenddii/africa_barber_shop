@@ -5,103 +5,102 @@
 
 {% block content %}
 
-<div style="margin-bottom: 20px;">
+<div style="margin-bottom: 16px;">
     <a href="{% url 'dashboard_bookings' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to All Bookings</a>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+<div class="dash-grid-2">
 
     <!-- LEFT: BOOKING SUMMARY & ACTIONS -->
     <div>
         <div class="dashboard-card">
-            <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+            <h3 style="margin-bottom: 18px; font-size: 1.1rem; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
                 Customer & Appointment Summary
             </h3>
 
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-                <div>
-                    <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Customer Name</span>
-                    <strong style="font-size: 1.1rem;">{{ booking.customer_name }}</strong>
+            <div class="detail-field">
+                <span class="detail-label">Customer Name</span>
+                <span class="detail-value">{{ booking.customer_name }}</span>
+            </div>
+
+            <div class="detail-field">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value gold"><i class="fa-solid fa-phone"></i> {{ booking.phone_number }}</span>
+            </div>
+
+            <div class="detail-grid-2">
+                <div class="detail-field">
+                    <span class="detail-label">Service</span>
+                    <span class="detail-value">{{ booking.service.name|default:"Blocked Period" }}</span>
+                    {% if booking.service %}<small style="color: var(--text-muted);">({{ booking.service.price }} ETB)</small>{% endif %}
                 </div>
-
-                <div>
-                    <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Phone Number</span>
-                    <strong style="font-size: 1.1rem; color: var(--accent-gold);"><i class="fa-solid fa-phone"></i> {{ booking.phone_number }}</strong>
+                <div class="detail-field">
+                    <span class="detail-label">Barber</span>
+                    <span class="detail-value">{{ booking.barber.name|default:"Any Available Barber" }}</span>
                 </div>
+            </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Service</span>
-                        <strong>{{ booking.service.name|default:"Blocked Period" }}</strong> {% if booking.service %}({{ booking.service.price }} ETB){% endif %}
-                    </div>
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Barber</span>
-                        <strong>{{ booking.barber.name|default:"Any Available Barber" }}</strong>
-                    </div>
+            <div class="detail-grid-2">
+                <div class="detail-field">
+                    <span class="detail-label">Appointment Date</span>
+                    <span class="detail-value">{{ booking.appointment_date|date:"l, F j, Y" }}</span>
                 </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Appointment Date</span>
-                        <strong>{{ booking.appointment_date|date:"l, F j, Y" }}</strong>
-                    </div>
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Appointment Time</span>
-                        <strong>{{ booking.appointment_time|time:"g:i A" }}</strong>
-                    </div>
+                <div class="detail-field">
+                    <span class="detail-label">Appointment Time</span>
+                    <span class="detail-value">{{ booking.appointment_time|time:"g:i A" }}</span>
                 </div>
+            </div>
 
-                {% if booking.notes %}
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Customer Notes</span>
-                        <p style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; margin-top: 4px;">{{ booking.notes }}</p>
-                    </div>
-                {% endif %}
+            {% if booking.notes %}
+                <div class="detail-field">
+                    <span class="detail-label">Customer Notes</span>
+                    <p style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; margin-top: 4px; color: var(--text-muted); font-size: 0.9rem;">{{ booking.notes }}</p>
+                </div>
+            {% endif %}
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Payment Status</span>
-                        <span class="badge badge-{{ booking.payment_status }}" style="font-size: 0.9rem; padding: 6px 14px; margin-top: 4px;">
-                            {{ booking.get_payment_status_display }}
-                        </span>
-                    </div>
-                    <div>
-                        <span style="color: var(--text-muted); font-size: 0.85rem; display: block;">Booking Status</span>
-                        <span class="badge badge-{{ booking.status }}" style="font-size: 0.9rem; padding: 6px 14px; margin-top: 4px;">
-                            {{ booking.get_status_display }}
-                        </span>
-                    </div>
+            <div class="detail-grid-2" style="margin-top: 8px;">
+                <div class="detail-field">
+                    <span class="detail-label">Payment Status</span>
+                    <span class="badge badge-{{ booking.payment_status }}" style="font-size: 0.85rem; padding: 6px 14px; margin-top: 4px;">
+                        {{ booking.get_payment_status_display }}
+                    </span>
+                </div>
+                <div class="detail-field">
+                    <span class="detail-label">Booking Status</span>
+                    <span class="badge badge-{{ booking.status }}" style="font-size: 0.85rem; padding: 6px 14px; margin-top: 4px;">
+                        {{ booking.get_status_display }}
+                    </span>
                 </div>
             </div>
         </div>
 
         <!-- ACTION BUTTONS CARD -->
         <div class="dashboard-card">
-            <h3 style="margin-bottom: 16px; font-size: 1.1rem; color: #fff;">Manage Status & Verification</h3>
+            <h3 style="margin-bottom: 14px; font-size: 1.05rem; color: #fff;">Manage Status & Verification</h3>
             
-            <form method="POST" style="display: flex; flex-direction: column; gap: 12px;">
+            <form method="POST" style="display: flex; flex-direction: column; gap: 10px;">
                 {% csrf_token %}
 
-                <div style="display: flex; gap: 10px;">
-                    <button type="submit" name="action" value="verify_payment" class="btn btn-success" style="flex: 1; padding: 12px; justify-content: center;">
+                <div class="action-row">
+                    <button type="submit" name="action" value="verify_payment" class="btn btn-success">
                         <i class="fa-solid fa-check-circle"></i> Verify Payment
                     </button>
 
-                    <button type="submit" name="action" value="reject_payment" class="btn btn-danger" style="flex: 1; padding: 12px; justify-content: center;">
+                    <button type="submit" name="action" value="reject_payment" class="btn btn-danger">
                         <i class="fa-solid fa-times-circle"></i> Reject Payment
                     </button>
                 </div>
 
-                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <button type="submit" name="action" value="confirm_booking" class="btn btn-gold" style="flex: 1; padding: 10px; justify-content: center;">
-                        <i class="fa-solid fa-calendar-check"></i> Confirm Booking
+                <div class="action-row">
+                    <button type="submit" name="action" value="confirm_booking" class="btn btn-gold">
+                        <i class="fa-solid fa-calendar-check"></i> Confirm
                     </button>
 
-                    <button type="submit" name="action" value="complete_booking" class="btn btn-secondary" style="flex: 1; padding: 10px; justify-content: center; background: #2a9d8f; color: #fff;">
-                        <i class="fa-solid fa-flag-checkered"></i> Mark Completed
+                    <button type="submit" name="action" value="complete_booking" class="btn" style="background: #2a9d8f; color: #fff;">
+                        <i class="fa-solid fa-flag-checkered"></i> Complete
                     </button>
 
-                    <button type="submit" name="action" value="cancel_booking" class="btn btn-secondary" style="padding: 10px; justify-content: center; background: #4a1515; color: #ff6b6b;">
+                    <button type="submit" name="action" value="cancel_booking" class="btn" style="background: #4a1515; color: #ff6b6b;">
                         <i class="fa-solid fa-ban"></i> Cancel
                     </button>
                 </div>
@@ -111,22 +110,22 @@
 
     <!-- RIGHT: PAYMENT SCREENSHOT PREVIEW -->
     <div class="dashboard-card">
-        <h3 style="margin-bottom: 16px; font-size: 1.1rem; color: #fff; display: flex; align-items: center; justify-content: space-between;">
-            <span><i class="fa-solid fa-receipt" style="color: var(--accent-gold);"></i> Uploaded Payment Screenshot</span>
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-receipt"></i> Payment Screenshot</span>
             {% if booking.payment_screenshot %}
-                <a href="{{ booking.payment_screenshot.url }}" target="_blank" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">
-                    <i class="fa-solid fa-up-right-from-square"></i> Open Full Image
+                <a href="{{ booking.payment_screenshot.url }}" target="_blank" class="btn btn-secondary btn-sm">
+                    <i class="fa-solid fa-up-right-from-square"></i> Full Image
                 </a>
             {% endif %}
-        </h3>
+        </div>
 
         {% if booking.payment_screenshot %}
-            <div style="text-align: center; background: #000; border-radius: 8px; padding: 15px; border: 1px solid var(--border-color);">
-                <img src="{{ booking.payment_screenshot.url }}" alt="Payment Screenshot" style="max-width: 100%; max-height: 500px; border-radius: 6px; object-fit: contain;">
+            <div class="screenshot-preview">
+                <img src="{{ booking.payment_screenshot.url }}" alt="Payment Screenshot">
             </div>
         {% else %}
-            <div style="text-align: center; color: var(--text-muted); padding: 50px; background: rgba(255,255,255,0.02); border-radius: 8px;">
-                <i class="fa-solid fa-image-slash" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+            <div class="screenshot-empty">
+                <i class="fa-solid fa-image"></i>
                 No payment screenshot uploaded for this booking.
             </div>
         {% endif %}

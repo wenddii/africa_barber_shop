@@ -5,79 +5,79 @@
 
 {% block content %}
 
-<div style="margin-bottom: 20px;">
+<div style="margin-bottom: 16px;">
     <a href="{% url 'dashboard_schedule' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Schedule Matrix</a>
 </div>
 
 <div style="max-width: 650px; margin: 0 auto;">
     <div class="dashboard-card">
-        <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <h3 style="margin-bottom: 18px; font-size: 1.1rem; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
             Record Offline Appointment / Block Time
         </h3>
 
         <form method="POST">
             {% csrf_token %}
 
-            <div style="margin-bottom: 16px;">
-                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Appointment Source / Type *</label>
+            <div class="dash-form-group">
+                <label class="dash-form-label">Appointment Source / Type *</label>
                 {{ form.booking_source }}
                 {% if form.booking_source.errors %}
-                    <span style="color: var(--danger); font-size: 0.8rem;">{{ form.booking_source.errors.0 }}</span>
+                    <span class="dash-form-error">{{ form.booking_source.errors.0 }}</span>
                 {% endif %}
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="dash-form-row">
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Customer Name / Label</label>
+                    <label class="dash-form-label">Customer Name / Label</label>
                     {{ form.customer_name }}
-                    <small style="color: var(--text-muted); font-size: 0.75rem;">(Required for Phone/Walk-in; defaults to 'Blocked Time')</small>
+                    <div class="dash-form-hint">(Required for Phone/Walk-in; defaults to 'Blocked Time')</div>
                     {% if form.customer_name.errors %}
-                        <span style="color: var(--danger); font-size: 0.8rem;">{{ form.customer_name.errors.0 }}</span>
+                        <span class="dash-form-error">{{ form.customer_name.errors.0 }}</span>
                     {% endif %}
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Phone Number (Optional)</label>
+                    <label class="dash-form-label">Phone Number (Optional)</label>
                     {{ form.phone_number }}
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="dash-form-row">
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Date *</label>
+                    <label class="dash-form-label">Date *</label>
                     {{ form.appointment_date }}
                     {% if form.appointment_date.errors %}
-                        <span style="color: var(--danger); font-size: 0.8rem;">{{ form.appointment_date.errors.0 }}</span>
+                        <span class="dash-form-error">{{ form.appointment_date.errors.0 }}</span>
                     {% endif %}
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Time *</label>
+                    <label class="dash-form-label">Time *</label>
                     {{ form.appointment_time }}
                     {% if form.appointment_time.errors %}
-                        <span style="color: var(--danger); font-size: 0.8rem;">{{ form.appointment_time.errors.0 }}</span>
+                        <span class="dash-form-error">{{ form.appointment_time.errors.0 }}</span>
                     {% endif %}
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="dash-form-row">
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Service (Optional for Blocked Time)</label>
+                    <label class="dash-form-label">Service (Optional for Blocked Time)</label>
                     {{ form.service }}
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Barber (Optional)</label>
+                    <label class="dash-form-label">Barber (Optional)</label>
                     {{ form.barber }}
                 </div>
             </div>
 
-            <div style="margin-bottom: 24px;">
-                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Notes / Reason (Optional)</label>
+            <div class="dash-form-group">
+                <label class="dash-form-label">Notes / Reason (Optional)</label>
                 {{ form.notes }}
             </div>
 
-            <button type="submit" class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1rem; justify-content: center;">
+            <button type="submit" class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1rem; justify-content: center; margin-top: 6px;">
                 <i class="fa-solid fa-save"></i> Save Appointment / Block Period
             </button>
         </form>
