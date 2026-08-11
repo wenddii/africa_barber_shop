@@ -49,7 +49,8 @@
             <span class="badge badge-pending">{{ today_appointments|length }} Bookings</span>
         </div>
 
-        <div class="table-responsive">
+        <!-- DESKTOP TABLE VIEW -->
+        <div class="table-responsive desktop-only">
             <table class="dash-table">
                 <thead>
                     <tr>
@@ -86,6 +87,43 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- DEDICATED MOBILE CARD LIST -->
+        <div class="mobile-only">
+            <div class="m-card-list">
+                {% for b in today_appointments %}
+                    <div class="m-card">
+                        <div class="m-card-header">
+                            <span class="m-card-title"><i class="fa-solid fa-clock" style="color: var(--accent-gold);"></i> {{ b.appointment_time|time:"g:i A" }}</span>
+                            <span class="badge badge-{{ b.status }}">{{ b.get_status_display }}</span>
+                        </div>
+                        <div class="m-card-body">
+                            <div class="m-card-row">
+                                <span class="m-card-label">Customer</span>
+                                <span class="m-card-val">
+                                    <strong>{{ b.customer_name }}</strong>
+                                    {% if b.phone_number %}<small style="display: block; color: var(--text-muted);">{{ b.phone_number }}</small>{% endif %}
+                                </span>
+                            </div>
+                            <div class="m-card-row">
+                                <span class="m-card-label">Service</span>
+                                <span class="m-card-val">{{ b.service.name }}</span>
+                            </div>
+                        </div>
+                        <div class="m-card-actions">
+                            <a href="{% url 'dashboard_booking_detail' b.id %}" class="btn btn-gold btn-sm">
+                                View Details & Status
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-cell">
+                        <i class="fa-solid fa-calendar-xmark"></i> No appointments scheduled for today.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
     </div>
 
     <!-- PENDING PAYMENTS QUEUE -->
@@ -95,7 +133,8 @@
             <a href="{% url 'dashboard_bookings' %}?payment=pending" class="btn btn-outline btn-sm">View All</a>
         </div>
 
-        <div class="table-responsive">
+        <!-- DESKTOP TABLE VIEW -->
+        <div class="table-responsive desktop-only">
             <table class="dash-table">
                 <thead>
                     <tr>
@@ -139,6 +178,43 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- DEDICATED MOBILE CARD LIST -->
+        <div class="mobile-only">
+            <div class="m-card-list">
+                {% for b in pending_payments %}
+                    <div class="m-card">
+                        <div class="m-card-header">
+                            <span class="m-card-title"><i class="fa-solid fa-calendar-days" style="color: var(--accent-gold);"></i> {{ b.appointment_date|date:"M d" }} at {{ b.appointment_time|time:"g:i A" }}</span>
+                            {% if b.payment_screenshot %}
+                                <span class="badge badge-verified"><i class="fa-solid fa-image"></i> Screenshot Uploaded</span>
+                            {% else %}
+                                <span class="badge badge-rejected">Missing</span>
+                            {% endif %}
+                        </div>
+                        <div class="m-card-body">
+                            <div class="m-card-row">
+                                <span class="m-card-label">Customer</span>
+                                <span class="m-card-val">
+                                    <strong>{{ b.customer_name }}</strong>
+                                    {% if b.phone_number %}<small style="display: block; color: var(--text-muted);">{{ b.phone_number }}</small>{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="m-card-actions">
+                            <a href="{% url 'dashboard_booking_detail' b.id %}" class="btn btn-gold btn-sm">
+                                Verify Payment & Screenshot
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-cell">
+                        <i class="fa-solid fa-check-circle" style="color: #2a9d8f;"></i> No pending payment verifications!
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
     </div>
 
 </div>

@@ -41,8 +41,8 @@
         </h4>
     </div>
 
-    <!-- SCHEDULE MATRIX -->
-    <div class="table-responsive">
+    <!-- DESKTOP SCHEDULE MATRIX -->
+    <div class="table-responsive desktop-only">
         <table class="dash-table">
             <thead>
                 <tr>
@@ -123,6 +123,73 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <!-- DEDICATED MOBILE CARD LIST -->
+    <div class="mobile-only">
+        <div class="m-card-list">
+            {% for slot in slots %}
+                <div class="m-card {% if slot.is_booked %}schedule-row-booked{% endif %}">
+                    <div class="m-card-header">
+                        <span class="m-card-title"><i class="fa-solid fa-clock" style="color: var(--accent-gold);"></i> {{ slot.time_obj|time:"g:i A" }}</span>
+                        {% if slot.is_booked %}
+                            {% if slot.booking.booking_source == 'blocked' %}
+                                <span class="badge badge-cancelled"><i class="fa-solid fa-ban"></i> Blocked</span>
+                            {% elif slot.booking.booking_source == 'walk_in' %}
+                                <span class="badge" style="background: rgba(233, 196, 106, 0.2); color: #e9c46a;"><i class="fa-solid fa-person-walking"></i> Walk-In</span>
+                            {% elif slot.booking.booking_source == 'phone' %}
+                                <span class="badge" style="background: rgba(155, 93, 229, 0.2); color: #9b5de5;"><i class="fa-solid fa-phone"></i> Phone</span>
+                            {% else %}
+                                <span class="badge badge-confirmed"><i class="fa-solid fa-globe"></i> Online</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="badge badge-verified" style="background: rgba(42, 157, 143, 0.15); color: #2a9d8f;"><i class="fa-solid fa-check"></i> Available</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="m-card-body">
+                        {% if slot.is_booked %}
+                            <div class="m-card-row">
+                                <span class="m-card-label">Customer</span>
+                                <span class="m-card-val">
+                                    <strong>{{ slot.booking.customer_name }}</strong>
+                                    {% if slot.booking.phone_number %}
+                                        <small style="display: block;"><a href="tel:{{ slot.booking.phone_number }}" style="color: var(--accent-gold); text-decoration: none;"><i class="fa-solid fa-phone"></i> {{ slot.booking.phone_number }}</a></small>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="m-card-row">
+                                <span class="m-card-label">Details</span>
+                                <span class="m-card-val">
+                                    {% if slot.booking.service %}{{ slot.booking.service.name }} ({{ slot.booking.service.duration }} mins){% else %}Blocked Period{% endif %}
+                                    {% if slot.booking.barber %}<small style="display: block; color: var(--text-muted);">Barber: {{ slot.booking.barber.name }}</small>{% endif %}
+                                </span>
+                            </div>
+                        {% else %}
+                            <div class="m-card-row">
+                                <span class="m-card-label">Status</span>
+                                <span class="m-card-val" style="color: var(--text-muted);">Open for appointment</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="m-card-actions">
+                        {% if slot.is_booked %}
+                            <a href="{% url 'dashboard_booking_detail' slot.booking.id %}" class="btn btn-gold btn-sm">
+                                Manage Appointment
+                            </a>
+                        {% else %}
+                            <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}&time={{ slot.time_str }}&source=phone{% if selected_barber %}&barber={{ selected_barber.id }}{% endif %}" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-phone"></i> Book
+                            </a>
+                            <a href="{% url 'dashboard_offline_booking_create' %}?date={{ selected_date }}&time={{ slot.time_str }}&source=blocked{% if selected_barber %}&barber={{ selected_barber.id }}{% endif %}" class="btn btn-danger btn-sm">
+                                <i class="fa-solid fa-lock"></i> Block
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 

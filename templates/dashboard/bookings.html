@@ -46,7 +46,8 @@
         </a>
     </div>
 
-    <div class="table-responsive">
+    <!-- DESKTOP TABLE VIEW -->
+    <div class="table-responsive desktop-only">
         <table class="dash-table">
             <thead>
                 <tr>
@@ -110,6 +111,69 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <!-- DEDICATED MOBILE CARD LIST -->
+    <div class="mobile-only">
+        <div class="m-card-list">
+            {% for b in bookings %}
+                <div class="m-card">
+                    <div class="m-card-header">
+                        <span class="m-card-title">#{{ b.id }} — {{ b.customer_name }}</span>
+                        {% if b.booking_source == 'blocked' %}
+                            <span class="badge badge-cancelled"><i class="fa-solid fa-ban"></i> Blocked</span>
+                        {% elif b.booking_source == 'walk_in' %}
+                            <span class="badge" style="background: rgba(233, 196, 106, 0.2); color: #e9c46a;">Walk-In</span>
+                        {% elif b.booking_source == 'phone' %}
+                            <span class="badge" style="background: rgba(155, 93, 229, 0.2); color: #9b5de5;">Phone</span>
+                        {% else %}
+                            <span class="badge badge-confirmed">Online</span>
+                        {% endif %}
+                    </div>
+                    <div class="m-card-body">
+                        <div class="m-card-row">
+                            <span class="m-card-label">Date & Time</span>
+                            <span class="m-card-val"><strong>{{ b.appointment_date|date:"M d, Y" }}</strong> at {{ b.appointment_time|time:"g:i A" }}</span>
+                        </div>
+                        {% if b.phone_number %}
+                            <div class="m-card-row">
+                                <span class="m-card-label">Phone</span>
+                                <span class="m-card-val"><a href="tel:{{ b.phone_number }}" style="color: var(--accent-gold); text-decoration: none;"><i class="fa-solid fa-phone"></i> {{ b.phone_number }}</a></span>
+                            </div>
+                        {% endif %}
+                        <div class="m-card-row">
+                            <span class="m-card-label">Service</span>
+                            <span class="m-card-val">{{ b.service.name|default:"Blocked Period" }}</span>
+                        </div>
+                        <div class="m-card-row">
+                            <span class="m-card-label">Barber</span>
+                            <span class="m-card-val">{{ b.barber.name|default:"Any Barber" }}</span>
+                        </div>
+                        <div class="m-card-row">
+                            <span class="m-card-label">Status</span>
+                            <span class="m-card-val">
+                                <span class="badge badge-{{ b.status }}">{{ b.get_status_display }}</span>
+                            </span>
+                        </div>
+                        <div class="m-card-row">
+                            <span class="m-card-label">Payment</span>
+                            <span class="m-card-val">
+                                <span class="badge badge-{{ b.payment_status }}">{{ b.get_payment_status_display }}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="m-card-actions">
+                        <a href="{% url 'dashboard_booking_detail' b.id %}" class="btn btn-gold btn-sm">
+                            Manage Booking & Payment
+                        </a>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-cell">
+                    No bookings found matching your criteria.
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
