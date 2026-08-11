@@ -4,7 +4,7 @@
             {% if shop and shop.logo %}
                 <img src="{{ shop.logo.url }}" alt="{{ shop.name }}" style="max-height: 50px; max-width: 180px; object-fit: contain; margin-bottom: 12px; display: block;">
             {% else %}
-                <strong style="font-size: 1.2rem; color: #fff; display: block; margin-bottom: 8px;">{{ shop.name|default:"Paradise Barber Shop" }}</strong>
+                <strong style="font-size: 1.2rem; color: #fff; display: block; margin-bottom: 8px;">{{ shop.name|default:"Africa Barber Shop" }}</strong>
             {% endif %}
             <p>{{ shop.description|default:"Premium grooming crafted with precision and care. Where every cut tells a story." }}</p>
         </div>
@@ -28,7 +28,7 @@
     </div>
     <div class="container">
         <div class="footer-bottom">
-            <span>&copy; {% now "Y" %} {{ shop.name|default:"Paradise Barber Shop" }}. All rights reserved.</span>
+            <span>&copy; {% now "Y" %} {{ shop.name|default:"Africa Barber Shop" }}. All rights reserved.</span>
             <span>{{ shop.location|default:"Addis Ababa, Ethiopia" }}</span>
         </div>
     </div>
