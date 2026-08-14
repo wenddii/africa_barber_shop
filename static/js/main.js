@@ -72,13 +72,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // ────────────────────────────────────────────────────────────
     // 4. ACTIVE NAV LINK — Scroll spy
     // ────────────────────────────────────────────────────────────
-    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    const navLinks = document.querySelectorAll('.nav-links a');
     const sections = [];
 
     navLinks.forEach((link) => {
-        const id = link.getAttribute('href').slice(1);
-        const section = document.getElementById(id);
-        if (section) sections.push({ el: section, link });
+        const href = link.getAttribute('href') || '';
+        const hashIndex = href.indexOf('#');
+        if (hashIndex !== -1) {
+            const id = href.slice(hashIndex + 1);
+            if (id && id !== 'top') {
+                const section = document.getElementById(id);
+                if (section) sections.push({ el: section, link });
+            }
+        }
     });
 
     if (sections.length > 0 && 'IntersectionObserver' in window) {
@@ -118,6 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function animateCounter(el) {
         const target = parseFloat(el.dataset.count);
+        if (isNaN(target)) return;
+
         const decimals = parseInt(el.dataset.decimals || 0, 10);
         const duration = 1800;
         const startTime = performance.now();
@@ -133,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (decimals > 0) {
                 el.textContent = current.toFixed(decimals);
             } else {
-                el.textContent = Math.floor(current) + (target >= 100 ? '+' : '+');
+                el.textContent = Math.floor(current) + '+';
             }
 
             if (progress < 1) {
@@ -154,21 +162,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // ────────────────────────────────────────────────────────────
     // 6. SMOOTH SCROLL — For anchor links
     // ────────────────────────────────────────────────────────────
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    document.querySelectorAll('a[href*="#"]').forEach((anchor) => {
         anchor.addEventListener('click', (e) => {
-            const targetId = anchor.getAttribute('href');
-            if (targetId === '#' || targetId === '#top') return; // let default behavior handle
+            const href = anchor.getAttribute('href') || '';
+            const hashIndex = href.indexOf('#');
+            if (hashIndex === -1) return;
 
-            const targetEl = document.querySelector(targetId);
-            if (targetEl) {
-                e.preventDefault();
-                const headerHeight = header ? header.offsetHeight : 0;
-                const top = targetEl.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
+            const targetPath = href.slice(0, hashIndex);
+            const targetId = href.slice(hashIndex);
 
-                window.scrollTo({
-                    top,
-                    behavior: 'smooth',
-                });
+            // Only smooth scroll if on current page
+            if (targetPath && targetPath !== window.location.pathname && targetPath !== '/') return;
+            if (targetId === '#' || targetId === '#top') {
+                if (targetId === '#top') {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                return;
+            }
+
+            try {
+                const targetEl = document.querySelector(targetId);
+                if (targetEl) {
+                    e.preventDefault();
+                    const headerHeight = header ? header.offsetHeight : 0;
+                    const top = targetEl.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
+
+                    window.scrollTo({
+                        top,
+                        behavior: 'smooth',
+                    });
+                }
+            } catch (err) {
+                // Ignore invalid CSS selector
             }
         });
     });

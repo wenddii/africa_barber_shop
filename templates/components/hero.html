@@ -1,4 +1,6 @@
-<section class="hero section-pad" style="background-image: url('/static/images/hero.jpg');">
+{% load static %}
+
+<section class="hero section-pad" style="background-image: url('{% static 'images/hero.jpg' %}');">
     <div class="container hero-grid hero-grid-minimal">
         <div class="hero-copy">
             <span class="eyebrow">Premium Grooming Experience</span>
@@ -9,7 +11,8 @@
             </p>
 
             <div class="hero-actions">
-                <a class="button button-primary" href="{% url 'booking' %}"><i class="fa-solid fa-calendar-check"></i> Book Appointment</a>
+                <a class="button button-primary" href="{% url 'booking' %}"><i class="fa-solid fa-calendar-check"></i>
+                    Book Appointment</a>
                 <a class="button button-ghost" href="#services"><i class="fa-solid fa-scissors"></i> View Services</a>
             </div>
         </div>
@@ -52,7 +55,8 @@
             <span class="eyebrow"><i class="fa-solid fa-gem"></i> Who We Are</span>
             <h2>Luxury barbering, built around your style.</h2>
             <p>
-                Africa Barber Shop is designed for clients who want more than a quick cut. It is a polished, calm environment where every detail feels intentional, modern, and refined.
+                {{ shop.name|default:"Africa Barber Shop" }} is designed for clients who want more than a quick cut. It
+                is a polished, calm environment where every detail feels intentional, modern, and refined.
             </p>
         </div>
 
