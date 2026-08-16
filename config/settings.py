@@ -5,7 +5,10 @@ import sys
 import dj_database_url
 from dotenv import load_dotenv
 
-load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / "config" / ".env")
 
 import cloudinary
 import cloudinary.uploader
@@ -15,7 +18,6 @@ import cloudinary.uploader
 # Base Directory
 # ------------------------------------------------------------------------------
 
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ------------------------------------------------------------------------------
@@ -32,7 +34,7 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    ".onrender.com",
+    "africa-barber-shop.vercel.app",
 ]
 
 
