@@ -179,14 +179,37 @@ def booking_create(request):
     )
 
 
+from django.core import signing
+from django.shortcuts import get_object_or_404, render
+
 def booking_success(request, pk):
     booking = get_object_or_404(Booking, pk=pk)
+
     shop = ShopInfo.objects.first()
+
+    # Create a secure, time-limited token for this booking
+    token = signing.dumps(
+        {"booking_id": booking.id},
+        compress=True,
+    )
+
+    # Telegram deep-link
+    telegram_link = (
+        f"https://t.me/{settings.TELEGRAM_BOT_USERNAME}"
+        f"?start={token}"
+    )
+
     context = {
         "booking": booking,
         "shop": shop,
+        "telegram_link": telegram_link,
     }
-    return render(request, "website/booking_success.html", context)
+
+    return render(
+        request,
+        "website/booking_success.html",
+        context
+    )
 
 
 def normalize_phone_number(phone_str):

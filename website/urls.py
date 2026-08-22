@@ -25,4 +25,5 @@ urlpatterns = [
     path("dashboard/gallery/", views.dashboard_gallery, name="dashboard_gallery"),
     path("dashboard/gallery/delete/<int:pk>/", views.dashboard_gallery_delete, name="dashboard_gallery_delete"),
     path("dashboard/shop/", views.dashboard_shop_info, name="dashboard_shop_info"),
+    
 ]
