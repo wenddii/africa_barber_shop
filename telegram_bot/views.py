@@ -1,4 +1,5 @@
 import json
+import requests
 
 from django.conf import settings
 from django.core import signing
@@ -10,6 +11,7 @@ from website.models import Booking
 
 @csrf_exempt
 def telegram_webhook(request):
+
     if request.method != "POST":
         return JsonResponse(
             {"status": "method not allowed"},
@@ -32,46 +34,59 @@ def telegram_webhook(request):
         chat_id = chat.get("id")
         text = message.get("text", "")
 
+        # Only process /start commands
         if not text.startswith("/start"):
             return JsonResponse({"ok": True})
 
         parts = text.split(maxsplit=1)
 
+        # User opened the bot without the booking link
         if len(parts) < 2:
             send_telegram_message(
                 chat_id,
                 "Please use the Telegram reminder link from your booking confirmation."
             )
+
             return JsonResponse({"ok": True})
 
         token = parts[1]
 
+        # Validate booking token
         try:
             payload = signing.loads(
                 token,
                 max_age=60 * 60 * 24 * 7
             )
+
         except signing.BadSignature:
+
             send_telegram_message(
                 chat_id,
                 "This reminder link is invalid or has expired. "
                 "Please make a new booking or contact the barbershop."
             )
+
             return JsonResponse({"ok": True})
 
         booking_id = payload.get("booking_id")
 
+        # Find booking
         try:
             booking = Booking.objects.get(id=booking_id)
+
         except Booking.DoesNotExist:
+
             send_telegram_message(
                 chat_id,
                 "We couldn't find this booking."
             )
+
             return JsonResponse({"ok": True})
 
+        # Connect Telegram account to booking
         booking.telegram_chat_id = chat_id
         booking.telegram_reminder_enabled = True
+
         booking.save(
             update_fields=[
                 "telegram_chat_id",
@@ -79,23 +94,27 @@ def telegram_webhook(request):
             ]
         )
 
-       send_telegram_message(
-        chat_id,
-        (
-            "✅ Booking Connected Successfully!\n\n"
-            f"Hello {booking.customer_name}!\n\n"
-            f"Your booking #{booking.id} has been successfully connected "
-            "to Telegram reminders.\n\n"
-            f"📅 Date: {booking.appointment_date.strftime('%B %d, %Y')}\n"
-            f"🕐 Time: {booking.appointment_time.strftime('%I:%M %p')}\n"
-            f"💈 Service: {booking.service.name if booking.service else 'Appointment'}\n\n"
-            "You'll receive a Telegram reminder before your appointment."
+        # Send confirmation
+        send_telegram_message(
+            chat_id,
+            (
+                f"Hello {booking.customer_name}! 👋\n\n"
+                "Your booking has been successfully connected to Telegram. ✅\n\n"
+                f"📅 Date: "
+                f"{booking.appointment_date.strftime('%B %d, %Y')}\n"
+                f"⏰ Time: "
+                f"{booking.appointment_time.strftime('%I:%M %p')}\n"
+                f"💈 Service: "
+                f"{booking.service.name}\n\n"
+                "Telegram reminders are now enabled. "
+                "We'll remind you before your appointment."
+            )
         )
-    )
 
         return JsonResponse({"ok": True})
 
     except Exception as e:
+
         print("Telegram webhook error:", e)
 
         return JsonResponse(
@@ -105,7 +124,6 @@ def telegram_webhook(request):
 
 
 def send_telegram_message(chat_id, text):
-    import requests
 
     url = (
         f"https://api.telegram.org/"
