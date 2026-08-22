@@ -65,14 +65,20 @@ def telegram_webhook(request):
         print("TOKEN RECEIVED:", token)
         print("TOKEN LENGTH:", len(token))
 
-        # Validate booking token
-        try:
-            payload = signing.loads(
-                token,
-                max_age=60 * 60 * 24 * 7
-            )
+        # ---------------------------------------------------------
+        # Validate Telegram booking token
+        # ---------------------------------------------------------
 
-            print("TOKEN PAYLOAD:", payload)
+        try:
+            signer = signing.Signer()
+
+            # Restore Django's original ":" separator
+            raw_token = token.replace("_", ":", 1)
+
+            # Verify signature and recover booking ID
+            booking_id = signer.unsign(raw_token)
+
+            print("BOOKING ID FROM TOKEN:", booking_id)
 
         except signing.BadSignature as e:
             print("INVALID TOKEN:", e)
@@ -85,9 +91,9 @@ def telegram_webhook(request):
 
             return JsonResponse({"ok": True})
 
-        booking_id = payload.get("booking_id")
-
-        print("BOOKING ID:", booking_id)
+        # ---------------------------------------------------------
+        # Validate booking ID
+        # ---------------------------------------------------------
 
         if not booking_id:
             print("No booking ID found in token.")
@@ -99,7 +105,10 @@ def telegram_webhook(request):
 
             return JsonResponse({"ok": True})
 
+        # ---------------------------------------------------------
         # Find booking
+        # ---------------------------------------------------------
+
         try:
             booking = Booking.objects.get(id=booking_id)
 
@@ -116,7 +125,10 @@ def telegram_webhook(request):
 
             return JsonResponse({"ok": True})
 
-        # Connect Telegram account to booking
+        # ---------------------------------------------------------
+        # Connect Telegram to booking
+        # ---------------------------------------------------------
+
         booking.telegram_chat_id = chat_id
         booking.telegram_reminder_enabled = True
 
@@ -129,29 +141,37 @@ def telegram_webhook(request):
 
         print("TELEGRAM CONNECTED TO BOOKING:", booking.id)
 
-        # Safely get service name
+        # ---------------------------------------------------------
+        # Get service name safely
+        # ---------------------------------------------------------
+
         service_name = (
             booking.service.name
             if booking.service
             else "Selected service"
         )
 
-        # Send confirmation
+        # ---------------------------------------------------------
+        # Send confirmation message
+        # ---------------------------------------------------------
+
+        message_text = (
+            f"Hello {booking.customer_name}! 👋\n\n"
+            "Your booking has been successfully connected to Telegram. ✅\n\n"
+            f"📋 Booking ID: #{booking.id}\n"
+            f"📅 Date: "
+            f"{booking.appointment_date.strftime('%B %d, %Y')}\n"
+            f"⏰ Time: "
+            f"{booking.appointment_time.strftime('%I:%M %p')}\n"
+            f"💈 Service: "
+            f"{service_name}\n\n"
+            "Telegram reminders are now enabled. "
+            "We'll remind you before your appointment."
+        )
+
         send_telegram_message(
             chat_id,
-            (
-                f"Hello {booking.customer_name}! 👋\n\n"
-                "Your booking has been successfully connected to Telegram. ✅\n\n"
-                f"📋 Booking ID: #{booking.id}\n"
-                f"📅 Date: "
-                f"{booking.appointment_date.strftime('%B %d, %Y')}\n"
-                f"⏰ Time: "
-                f"{booking.appointment_time.strftime('%I:%M %p')}\n"
-                f"💈 Service: "
-                f"{service_name}\n\n"
-                "Telegram reminders are now enabled. "
-                "We'll remind you before your appointment."
-            )
+            message_text
         )
 
         print("========== TELEGRAM WEBHOOK SUCCESS ==========")
@@ -179,7 +199,6 @@ def send_telegram_message(chat_id, text):
 
     if not token:
         print("ERROR: TELEGRAM_BOT_TOKEN IS MISSING")
-
         return False
 
     url = (
@@ -211,5 +230,4 @@ def send_telegram_message(chat_id, text):
     except requests.RequestException as e:
 
         print("TELEGRAM REQUEST ERROR:", repr(e))
-
         return False

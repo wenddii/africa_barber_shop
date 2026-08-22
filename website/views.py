@@ -187,13 +187,12 @@ def booking_success(request, pk):
 
     shop = ShopInfo.objects.first()
 
-    # Create a secure, time-limited token for this booking
-    token = signing.dumps(
-        {"booking_id": booking.id},
-        compress=True,
-    )
+    signer = signing.Signer()
 
-    # Telegram deep-link
+    token = signer.sign(
+        str(booking.id)
+    ).replace(":", "_")
+
     telegram_link = (
         f"https://t.me/{settings.TELEGRAM_BOT_USERNAME}"
         f"?start={token}"
