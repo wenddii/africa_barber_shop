@@ -119,21 +119,45 @@ def booking_create(request):
 
     if request.method == "POST":
         form = BookingForm(request.POST, request.FILES)
+
         if form.is_valid():
             booking = form.save(commit=False)
+
+            # Booking status
             booking.payment_status = "pending"
             booking.status = "pending"
+
+            # Telegram reminder defaults
+            booking.telegram_chat_id = None
+            booking.telegram_reminder_enabled = False
+
             booking.save()
-            messages.success(request, "Your booking request has been submitted! Please wait while our barber verifies your payment.")
-            return redirect("booking_success", pk=booking.pk)
+
+            messages.success(
+                request,
+                "Your booking request has been submitted! "
+                "Please wait while our barber verifies your payment."
+            )
+
+            return redirect(
+                "booking_success",
+                pk=booking.pk
+            )
+
         else:
-            messages.error(request, "Please correct the errors below to complete your booking.")
+            messages.error(
+                request,
+                "Please correct the errors below to complete your booking."
+            )
+
     else:
         initial_data = {
             "appointment_date": today.strftime("%Y-%m-%d"),
         }
+
         if initial_service and initial_service.isdigit():
             initial_data["service"] = initial_service
+
         if initial_barber and initial_barber.isdigit():
             initial_data["barber"] = initial_barber
 
@@ -147,29 +171,12 @@ def booking_create(request):
         "today": today.strftime("%Y-%m-%d"),
         "max_date": max_date.strftime("%Y-%m-%d"),
     }
-    return render(request, "website/booking.html", context)
 
-
-def booking_success(request, pk):
-    booking = get_object_or_404(Booking, pk=pk)
-    shop = ShopInfo.objects.first()
-
-    token = signing.dumps(
-        {"booking_id": booking.id}
+    return render(
+        request,
+        "website/booking.html",
+        context
     )
-
-    telegram_link = (
-        f"https://t.me/{settings.TELEGRAM_BOT_USERNAME}"
-        f"?start={token}"
-    )
-
-    context = {
-        "booking": booking,
-        "shop": shop,
-        "telegram_link": telegram_link,
-    }
-
-    return render(request, "website/booking_success.html", context)
 
 
 def normalize_phone_number(phone_str):
