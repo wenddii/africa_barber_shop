@@ -79,16 +79,19 @@ def telegram_webhook(request):
             ]
         )
 
-        send_telegram_message(
-            chat_id,
-            (
-                f"Hello {booking.customer_name}! 👋\n\n"
-                f"Telegram reminders are now enabled for your "
-                f"appointment on {booking.appointment_date.strftime('%B %d')} "
-                f"at {booking.appointment_time.strftime('%I:%M %p')}.\n\n"
-                "We'll remind you before your appointment. 💈"
-            )
+       send_telegram_message(
+        chat_id,
+        (
+            "✅ Booking Connected Successfully!\n\n"
+            f"Hello {booking.customer_name}!\n\n"
+            f"Your booking #{booking.id} has been successfully connected "
+            "to Telegram reminders.\n\n"
+            f"📅 Date: {booking.appointment_date.strftime('%B %d, %Y')}\n"
+            f"🕐 Time: {booking.appointment_time.strftime('%I:%M %p')}\n"
+            f"💈 Service: {booking.service.name if booking.service else 'Appointment'}\n\n"
+            "You'll receive a Telegram reminder before your appointment."
         )
+    )
 
         return JsonResponse({"ok": True})
 
