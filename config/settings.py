@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "cloudinary_storage",
 
     "website",
+    "telegram_bot",
 ]
 
 
@@ -234,3 +235,5 @@ LOGIN_REDIRECT_URL = "dashboard_index"
 # ------------------------------------------------------------------------------
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")

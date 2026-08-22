@@ -423,10 +423,6 @@ def dashboard_booking_detail(request, pk):
             booking.status = "cancelled"
             booking.save()
             messages.warning(request, f"Payment for Booking #{booking.id} rejected and booking cancelled.")
-        elif action == "confirm_booking":
-            booking.status = "confirmed"
-            booking.save()
-            messages.success(request, f"Booking #{booking.id} confirmed.")
         elif action == "cancel_booking":
             booking.status = "cancelled"
             booking.save()

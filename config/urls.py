@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('website.urls')),
+    path('telegram/', include('telegram_bot.urls')),
 ]
 
 if settings.DEBUG:
