@@ -6,6 +6,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Q
+from django.conf import settings
+from django.core import signing
 
 from .forms import (
     ContactForm,
@@ -151,10 +153,22 @@ def booking_create(request):
 def booking_success(request, pk):
     booking = get_object_or_404(Booking, pk=pk)
     shop = ShopInfo.objects.first()
+
+    token = signing.dumps(
+        {"booking_id": booking.id}
+    )
+
+    telegram_link = (
+        f"https://t.me/{settings.TELEGRAM_BOT_USERNAME}"
+        f"?start={token}"
+    )
+
     context = {
         "booking": booking,
         "shop": shop,
+        "telegram_link": telegram_link,
     }
+
     return render(request, "website/booking_success.html", context)
 
 

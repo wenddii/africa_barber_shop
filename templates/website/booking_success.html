@@ -25,43 +25,116 @@
 
                 <div class="success-summary">
                     <h4>Booking Summary</h4>
+
                     <div class="success-summary-row">
                         <span class="success-summary-label">Booking ID</span>
                         <span class="success-summary-value">#{{ booking.id }}</span>
                     </div>
+
                     <div class="success-summary-row">
                         <span class="success-summary-label">Service</span>
-                        <span class="success-summary-value">{{ booking.service.name }} ({{ booking.service.price }} ETB)</span>
+                        <span class="success-summary-value">
+                            {{ booking.service.name }} ({{ booking.service.price }} ETB)
+                        </span>
                     </div>
+
                     {% if booking.barber %}
                     <div class="success-summary-row">
                         <span class="success-summary-label">Barber</span>
                         <span class="success-summary-value">{{ booking.barber.name }}</span>
                     </div>
                     {% endif %}
+
                     <div class="success-summary-row">
                         <span class="success-summary-label">Date</span>
-                        <span class="success-summary-value">{{ booking.appointment_date|date:"l, F j, Y" }}</span>
+                        <span class="success-summary-value">
+                            {{ booking.appointment_date|date:"l, F j, Y" }}
+                        </span>
                     </div>
+
                     <div class="success-summary-row">
                         <span class="success-summary-label">Time</span>
-                        <span class="success-summary-value">{{ booking.appointment_time|time:"g:i A" }}</span>
+                        <span class="success-summary-value">
+                            {{ booking.appointment_time|time:"g:i A" }}
+                        </span>
                     </div>
+
                     <div class="success-summary-row">
                         <span class="success-summary-label">Phone</span>
-                        <span class="success-summary-value">{{ booking.phone_number }}</span>
+                        <span class="success-summary-value">
+                            {{ booking.phone_number }}
+                        </span>
                     </div>
+
                     <div class="success-summary-row">
                         <span class="success-summary-label">Payment</span>
-                        <span class="success-summary-value status">{{ booking.get_payment_status_display }}</span>
+                        <span class="success-summary-value status">
+                            {{ booking.get_payment_status_display }}
+                        </span>
                     </div>
                 </div>
 
-                <div class="success-actions">
-                    <a href="{% url 'track_booking' %}?phone={{ booking.phone_number|urlencode }}" class="button button-primary"><i class="fa-solid fa-magnifying-glass"></i> Track My Booking</a>
-                    <a href="{% url 'home' %}" class="button button-ghost"><i class="fa-solid fa-house"></i> Home</a>
-                    <a href="{% url 'booking' %}" class="button button-ghost"><i class="fa-solid fa-plus"></i> New Booking</a>
+
+                <!-- Telegram Reminder -->
+                <div class="telegram-reminder-card">
+
+                    <div class="telegram-reminder-icon">
+                        <i class="fa-brands fa-telegram"></i>
+                    </div>
+
+                    <div class="telegram-reminder-content">
+                        <h3>Get a Telegram Reminder</h3>
+
+                        <p>
+                            Don't forget your appointment. Connect Telegram and
+                            we'll send you a reminder before your appointment.
+                        </p>
+
+                        <a
+                            href="{{ telegram_link }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="button button-primary telegram-button"
+                        >
+                            <i class="fa-brands fa-telegram"></i>
+                            Enable Telegram Reminders
+                        </a>
+
+                        <small>
+                            This is completely optional. You can continue without
+                            enabling reminders.
+                        </small>
+                    </div>
+
                 </div>
+
+
+                <div class="success-actions">
+                    <a
+                        href="{% url 'track_booking' %}?phone={{ booking.phone_number|urlencode }}"
+                        class="button button-primary"
+                    >
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Track My Booking
+                    </a>
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="button button-ghost"
+                    >
+                        <i class="fa-solid fa-house"></i>
+                        Home
+                    </a>
+
+                    <a
+                        href="{% url 'booking' %}"
+                        class="button button-ghost"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        New Booking
+                    </a>
+                </div>
+
             </div>
         </div>
     </main>

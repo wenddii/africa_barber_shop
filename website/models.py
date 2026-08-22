@@ -72,12 +72,14 @@ class Booking(models.Model):
         ("verified", "Verified"),
         ("rejected", "Rejected"),
     ]
+
     BOOKING_STATUS_CHOICES = [
         ("pending", "Pending"),
         ("confirmed", "Confirmed"),
         ("completed", "Completed"),
         ("cancelled", "Cancelled"),
     ]
+
     BOOKING_SOURCE_CHOICES = [
         ("online", "Online"),
         ("phone", "Phone Call"),
@@ -87,15 +89,62 @@ class Booking(models.Model):
 
     customer_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20, blank=True)
-    service = models.ForeignKey(Service, on_delete=models.PROTECT, related_name="bookings", null=True, blank=True)
-    barber = models.ForeignKey(Barber, on_delete=models.SET_NULL, null=True, blank=True, related_name="bookings")
+
+    service = models.ForeignKey(
+        Service,
+        on_delete=models.PROTECT,
+        related_name="bookings",
+        null=True,
+        blank=True
+    )
+
+    barber = models.ForeignKey(
+        Barber,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="bookings"
+    )
+
     appointment_date = models.DateField()
     appointment_time = models.TimeField()
-    payment_screenshot = models.ImageField(upload_to="booking_payments/", null=True, blank=True)
-    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="pending")
-    status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default="pending")
-    booking_source = models.CharField(max_length=20, choices=BOOKING_SOURCE_CHOICES, default="online")
+
+    payment_screenshot = models.ImageField(
+        upload_to="booking_payments/",
+        null=True,
+        blank=True
+    )
+
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="pending"
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=BOOKING_STATUS_CHOICES,
+        default="pending"
+    )
+
+    booking_source = models.CharField(
+        max_length=20,
+        choices=BOOKING_SOURCE_CHOICES,
+        default="online"
+    )
+
     notes = models.TextField(blank=True)
+
+    # Telegram reminders
+    telegram_chat_id = models.BigIntegerField(
+        null=True,
+        blank=True
+    )
+
+    telegram_reminder_enabled = models.BooleanField(
+        default=False
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -103,4 +152,9 @@ class Booking(models.Model):
 
     def __str__(self):
         source_lbl = self.get_booking_source_display()
-        return f"Booking #{self.id} [{source_lbl}] - {self.customer_name} ({self.appointment_date} {self.appointment_time})"
+
+        return (
+            f"Booking #{self.id} [{source_lbl}] - "
+            f"{self.customer_name} "
+            f"({self.appointment_date} {self.appointment_time})"
+        )
