@@ -1,5 +1,4 @@
 import json
-import os
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,6 +11,8 @@ def telegram_webhook(request):
 
     data = json.loads(request.body)
 
-    print(data)  # We'll replace this later
+    print("=" * 50)
+    print(data)
+    print("=" * 50)
 
     return JsonResponse({"ok": True})
