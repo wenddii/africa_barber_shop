@@ -179,6 +179,16 @@ def booking_create(request):
     )
 
 
+def booking_success(request, pk):
+    booking = get_object_or_404(Booking, pk=pk)
+    shop = ShopInfo.objects.first()
+    context = {
+        "booking": booking,
+        "shop": shop,
+    }
+    return render(request, "website/booking_success.html", context)
+
+
 def normalize_phone_number(phone_str):
     if not phone_str:
         return ""
