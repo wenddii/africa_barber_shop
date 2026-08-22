@@ -34,7 +34,7 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "africa-barber-shop.vercel.app",
+    "africa-barber-shop-gj5hr2unq-wendwosens-projects.vercel.app",
 ]
 
 
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "cloudinary_storage",
 
     "website",
+
     "telegram_bot",
 ]
 
