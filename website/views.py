@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.conf import settings
 from django.core import signing
+from .telegram_notifications import send_booking_confirmed
 
 
 from .forms import (
@@ -466,29 +467,62 @@ def dashboard_booking_detail(request, pk):
 
     if request.method == "POST":
         action = request.POST.get("action")
+
         if action == "verify_payment":
             booking.payment_status = "verified"
             booking.status = "confirmed"
             booking.save()
-            messages.success(request, f"Payment for Booking #{booking.id} verified and booking confirmed!")
+
+            # Send Telegram confirmation
+            if (
+                booking.telegram_reminder_enabled
+                and booking.telegram_chat_id
+            ):
+                send_booking_confirmed(booking)
+
+            messages.success(
+                request,
+                f"Payment for Booking #{booking.id} verified and booking confirmed!"
+            )
+
         elif action == "reject_payment":
             booking.payment_status = "rejected"
             booking.status = "cancelled"
             booking.save()
-            messages.warning(request, f"Payment for Booking #{booking.id} rejected and booking cancelled.")
+
+            messages.warning(
+                request,
+                f"Payment for Booking #{booking.id} rejected and booking cancelled."
+            )
+
         elif action == "cancel_booking":
             booking.status = "cancelled"
             booking.save()
-            messages.warning(request, f"Booking #{booking.id} cancelled.")
+
+            messages.warning(
+                request,
+                f"Booking #{booking.id} cancelled."
+            )
+
         elif action == "complete_booking":
             booking.status = "completed"
             booking.save()
-            messages.success(request, f"Booking #{booking.id} marked as completed.")
 
-        return redirect("dashboard_booking_detail", pk=booking.pk)
+            messages.success(
+                request,
+                f"Booking #{booking.id} marked as completed."
+            )
 
-    return render(request, "dashboard/booking_detail.html", {"booking": booking})
+        return redirect(
+            "dashboard_booking_detail",
+            pk=booking.pk
+        )
 
+    return render(
+        request,
+        "dashboard/booking_detail.html",
+        {"booking": booking}
+    )
 
 @login_required
 @user_passes_test(is_staff_user)
