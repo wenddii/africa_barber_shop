@@ -11,7 +11,9 @@ from website.models import Booking
 
 @csrf_exempt
 def telegram_webhook(request):
-
+    print("========== TELEGRAM WEBHOOK RECEIVED ==========")
+    print("BODY:", request.body)
+    
     if request.method != "POST":
         return JsonResponse(
             {"status": "method not allowed"},
