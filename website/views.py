@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.core import signing
 
+
 from .forms import (
     ContactForm,
     BookingForm,
@@ -179,8 +180,7 @@ def booking_create(request):
     )
 
 
-from django.core import signing
-from django.shortcuts import get_object_or_404, render
+
 
 def booking_success(request, pk):
     booking = get_object_or_404(Booking, pk=pk)
